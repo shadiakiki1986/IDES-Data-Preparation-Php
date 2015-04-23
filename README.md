@@ -8,4 +8,4 @@ For more information check http://www.irs.gov/Businesses/Corporations/FATCA-IDES
 For other language implementations, please check https://github.com/IRSgov
 
 # General
-The php file in var/www can be published via an apache server to expose 3 formats of the client data: html, xml, zip.
+The links published in var/www/index.html via an apache server expose 3 formats of the client data: html, xml, zip.
