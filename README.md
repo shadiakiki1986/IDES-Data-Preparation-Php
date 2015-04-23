@@ -9,3 +9,5 @@ For other language implementations, please check https://github.com/IRSgov
 
 # General
 The links published in var/www/index.html via an apache server expose 3 formats of the client data: html, xml, zip.
+
+The code itself is far from perfect. Constructive feedback is welcome.
