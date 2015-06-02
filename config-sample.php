@@ -6,11 +6,10 @@
 #-------------------------------------------
 
 # Root directory of installation
+define("ROOT_IDES_DATA", dirname(__FILE__));// from https://github.com/shadiakiki1986/IDES-Data-Preparation-Php
 define("ROOT_DB_API", "path/to/ffa-mfe/databases-api"); // installation for MarketflowClient class in ffa-mfe/databases-api (from my bitbucket private repository)
-define("ROOT_IDES_DATA", "path/to/IDES-Data-Preparation-Php"); // https://github.com/shadiakiki1986/IDES-Data-Preparation-Php
+define("MF_DB_YML","path/to/file");# Marketflow database info
 
-# Marketflow database info
-define("MF_DB_YML","path/to/file");
 
 # more required files
 define('FatcaXsd',"path/to/FATCA XML Schema v1.1/FatcaXML_v1.1.xsd"); // from http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-and-Business-Rules-for-Form-8966

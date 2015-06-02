@@ -26,7 +26,8 @@
 		 });
 */
 
-require_once '/etc/IDES-Data-Preparation-Php.php'; // copy the provided sample in repository/etc/IDES-Data-Preparation-Php-sample.php
+require_once dirname(__FILE__).'/../../../config.php'; // copy the provided sample in repository/config-sample.php
+
 require_once ROOT_DB_API.'/lib/MarketflowClient.php';
 require_once ROOT_DB_API.'/var/www/api/argsProcessor.php';
 require_once ROOT_IDES_DATA.'/lib/libxml_helpers.php';
