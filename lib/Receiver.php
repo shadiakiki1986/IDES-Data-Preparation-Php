@@ -1,6 +1,6 @@
 <?php
 
-class FatcaClientsAdapter {
+class Receiver {
 
 var $data; // php data with fatca information
 var $dataXml;
@@ -17,16 +17,102 @@ var $aesEncrypted;
 var $ts;
 var $file_name;
 
-function __construct($dd) {
-	$this->data=$dd;
+var $from;
+var $to;
+
+function __construct($tf4=false) {
+	if(!$tf4) {
+		$tf4=sys_get_temp_dir();
+		$temp_file = tempnam(sys_get_temp_dir(), 'Tux');
+		unlink($temp_file);
+		mkdir($temp_file);
+		$tf4=$temp_file;
+	}
+
 	$this->tf1=tempnam("/tmp","");
 	$this->tf2=tempnam("/tmp","");
 	$this->tf3=tempnam("/tmp","");
-	$this->tf4=tempnam("/tmp","");
+	$this->tf4=$tf4;
 
 	$this->ts=time();
 	$this->ts2=strftime("%Y-%m-%dT%H:%M:%SZ",$this->ts);
 }
+
+function fromZip($filename) {
+	$zip = new ZipArchive();
+	if ($zip->open($filename) === TRUE) {
+	    $zip->extractTo($this->tf4);
+	    $zip->close();
+	} else {
+	    throw new Exception('failed to open archive');
+	}
+
+	$xx=scandir($this->tf4);
+	$this->files["payload"]=array_values(preg_grep("/.*_Payload/",$xx));
+	$this->files["payload"]=$this->files["payload"][0];
+	$this->from=preg_replace("/(.*)_Payload/","$1",$this->files["payload"]);
+	$this->files["key"]=array_values(preg_grep("/.*_Key/",$xx));
+	$this->files["key"]=$this->files["key"][0];
+	$this->to  =preg_replace("/(.*)_Key/","$1",$this->files["key"]);
+
+	  $fp=fopen($this->tf4."/".$this->files["key"],"r");
+	  $this->aesEncrypted=fread($fp,8192);
+	  fclose($fp);
+}
+
+	function decryptAesKey() {
+		$this->aeskey="";
+		if(!openssl_private_decrypt( $this->aesEncrypted , $this->aeskey , $this->readFfaPrivateKey() )) throw new Exception("Could not decrypt aes key");
+		if($this->aeskey=="") throw new Exception("Failed to decrypt AES key");
+	}
+
+	function readFfaPrivateKey($returnResource=true) {
+	  $kk=($this->from=="000000.00000.TA.840"?FatcaKeyPrivate:("B7PPBF.00000.LE.422"?FatcaIrsPublic:die("WTF")));
+	  $fp=fopen($kk,"r");
+	  $priv_key_string=fread($fp,8192);
+	  fclose($fp);
+	  if($returnResource) {
+		$priv_key="";
+		$priv_key=openssl_get_privatekey($priv_key_string); 
+		return $priv_key;
+	  } else {
+		return $priv_key_string;
+	  }
+	}
+
+	function fromEncrypted() {
+		//$this->aeskey = openssl_random_pseudo_bytes(32);
+		// $this->aeskey = pack('H*', "bcb04b7e103a0cd8b54763051cef08bc55abe029fdebae5e1d417e2ffb2a00a3");
+		$key_size =  strlen($this->aeskey);
+		if($key_size!=32) throw new Exception("Invalid key size ".$key_size);
+
+		$fp=fopen($this->tf4."/".$this->files["payload"],"r");
+		$this->dataEncrypted=fread($fp,8192);
+		fclose($fp);
+
+/*		// remove PCKS7 padding
+		// http://php.net/manual/en/function.mcrypt-encrypt.php#47973
+		$block = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, 'ecb');
+		$len = strlen($crypttext);
+		$padding = $block - ($len % $block);
+		$crypttext .= str_repeat(chr($padding),$padding); // change this to drop last characters
+*/
+		$this->dataCompressed = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $this->aeskey, $this->dataEncrypted, "ecb");
+	}
+
+	function fromCompressed() {
+		$tf3=tempnam("/tmp","");
+		file_put_contents($tf3,$this->dataCompressed);
+
+		$zip = new ZipArchive();
+		if ($zip->open($tf3) === TRUE) {
+			$this->dataXmlSigned=$zip->getFromIndex(0);
+			$zip->close();
+		} else {
+		    throw new Exception('failed to read compressed data');
+		}
+	}
+
 
 function toHtml() {
 	return sprintf("<table border=1>%s%s</table>",
@@ -197,125 +283,6 @@ function toXmlSigned() {
 			openssl_free_key($pubkeyid);
 */
 			return(exec("openssl rsautl -verify -in $this->tf2 -inkey ".FatcaKeyPublic." -pubin")==$this->diDigest);
-	}
-
-	function toCompressed() {
-		$zip = new ZipArchive();
-		$filename = $this->tf3;
-
-		if ($zip->open($filename, ZipArchive::CREATE)!==TRUE) {
-		    exit("cannot open <$filename>\n");
-		}
-
-		$zip->addFromString(ffaid."_Payload.xml", $this->addHeader($this->dataXmlSigned));
-		$zip->close();
-
-		$this->dataCompressed=file_get_contents($this->tf3);
-	}
-
-	function toEncrypted() {
-		$this->aeskey = openssl_random_pseudo_bytes(32);
-		// $this->aeskey = pack('H*', "bcb04b7e103a0cd8b54763051cef08bc55abe029fdebae5e1d417e2ffb2a00a3");
-		$key_size =  strlen($this->aeskey);
-		if($key_size!=32) die("Invalid key size ".$key_size);
-		$text = $this->dataCompressed;
-		$crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->aeskey, $text, "ecb");
-
-		// add PCKS7 padding
-		// http://php.net/manual/en/function.mcrypt-encrypt.php#47973
-		$block = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, 'ecb');
-		$len = strlen($crypttext);
-		$padding = $block - ($len % $block);
-		$crypttext .= str_repeat(chr($padding),$padding);
-
-		$this->dataEncrypted=$crypttext;
-	}
-
-	function readIrsPublicKey($returnResource=true) {
-	  $fp=fopen(FatcaIrsPublic,"r");
-	  $pub_key_string=fread($fp,8192);
-	  fclose($fp);
-	  if($returnResource) {
-		$pub_key="";
-		$pub_key=openssl_get_publickey($pub_key_string); 
-		return $pub_key;
-	  } else {
-		return $pub_key_string;
-	  }
-	}
-
-	function encryptAesKeyFile() {
-/*		$tf1=tempnam("/tmp","");
-		$tf2=tempnam("/tmp","");
-		file_put_contents($tf1,$this->aeskey);
-		$cmd="openssl rsautl -encrypt -pubin -inkey ".FatcaIrsPublic." -in ".$tf1." -out ".$tf2;
-		exec($cmd);
-var_dump("asdfasdf",$cmd);
-		$this->aesEncrypted=file_get_contents($tf2);
-*/
-
-		$this->aesEncrypted="";
-		if(!openssl_public_encrypt ( $this->aeskey , $this->aesEncrypted , $this->readIrsPublicKey() )) throw new Exception("Did not encrypt aes key");
-		if($this->aesEncrypted=="") throw new Exception("Failed to encrypt AES key");
-	}
-
-	function verifyAesKeyFileEncrypted() {
-/*		$tf1=tempnam("/tmp","");
-		file_put_contents($tf1,$this->aesEncrypted);
-var_dump($this->aesEncrypted);
-		$cmd="openssl rsautl -decrypt -pubin -in $tf1 -inkey ".FatcaIrsPublic;
-var_dump($cmd);
-		$temp=exec($cmd);
-var_dump(base64_encode($this->aeskey));
-var_dump($temp);
-*/
-		$pubk=$this->readIrsPublicKey(true);
-//var_dump($pubk,$this->aesEncrypted);
-		$decrypted="";
-		if(!openssl_public_decrypt( $this->aesEncrypted , $decrypted , $pubk )) throw new Exception("Failed to decrypt aes key for verification purposes");
-		return($decrypted==$this->aeskey);
-	}
-
-	function getMetadata() {
-		$this->file_name = strftime("%Y%m%d%H%M%S00%Z",$this->ts)."_".ffaid.".zip";
-
-		$md='<?xml version="1.0" encoding="utf-8"?>
-		<FATCAIDESSenderFileMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:fatca:idessenderfilemetadata">
-			<FATCAEntitySenderId>'.ffaid.'</FATCAEntitySenderId>
-			<FATCAEntityReceiverId>000000.00000.TA.840</FATCAEntityReceiverId>
-			<FATCAEntCommunicationTypeCd>RPT</FATCAEntCommunicationTypeCd>
-			<SenderFileId>'.$this->file_name.'</SenderFileId>
-			<FileCreateTs>'.$this->ts2.'</FileCreateTs>
-			<TaxYear>'.strftime("%Y",$this->ts).'</TaxYear>
-			<FileRevisionInd>false</FileRevisionInd>
-		</FATCAIDESSenderFileMetadata>';
-		return $md;
-	}
-
-	function toZip() {
-		$zip = new ZipArchive();
-		$filename = $this->tf4;
-
-		if ($zip->open($filename, ZipArchive::CREATE)!==TRUE) {
-		    exit("cannot open <$filename>\n");
-		}
-
-		$zip->addFromString(ffaid."_Payload", $this->dataEncrypted);
-		$zip->addFromString(ffaidReceiver."_Key", $this->aesEncrypted);
-		$zip->addFromString(ffaid."_Metadata.xml", $this->getMetadata());
-		$zip->close();
-	}
-
-	function getZip() {
-		// or however you get the path
-		$yourfile = $this->tf4;
-		date_default_timezone_set("UTC");
-
-		header("Content-Type: application/zip");
-		header("Content-Disposition: attachment; filename=".$this->file_name);
-		header("Content-Length: " . filesize($yourfile));
-
-		readfile($yourfile);
 	}
 
 } // end class

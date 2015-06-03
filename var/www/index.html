@@ -1,11 +1,44 @@
 <html>
 <body>
 <h1>IDES Data Preparation</h1>
-Click on any link below to check data transmittable to IDES for Fatca
-<ul>
-<li><a href="api/getFatcaClients.php?format=html" target="_blank">Html</a>: Use this to see the data in tabular format</li>
-<li><a href="api/getFatcaClients.php?format=xml" target="_blank">Xml</a>: Use this to see the data as it is stored in the file to be transmitted to IDES</li>
-<li><a href="api/getFatcaClients.php?format=zip" target="_blank">Zip</a>: Use this to get the file that should be transmitted to IDES</li>
-</ul>
+<ol>
+<li>IDES Gateway: 
+	<ol>
+	<li><a href="https://wwwpse.idesgateway.com/"  target="_blank">test</a></li>
+	<li><a href="https://www.idesgateway.com/"     target="_blank">live</a></li>
+	</ol>
+</li>
+<li>
+	Data transmittable to IDES for Fatca
+	<ol>
+	<li>HTML: To see data in tabular format
+		<ul>
+		<li><a href="api/getFatcaClients.php?format=html&shuffle=true"  target="_blank">shuffled</a></li>
+		<li><a href="api/getFatcaClients.php?format=html&shuffle=false" target="_blank">unshuffled</a></li>
+		</ul>
+	</li>
+	<li>Xml: To see the data as it is stored in the file to be transmitted to IDES
+		<ul>
+		<li><a href="api/getFatcaClients.php?format=xml&shuffle=true"  target="_blank">shuffled</a></li>
+		<li><a href="api/getFatcaClients.php?format=xml&shuffle=false" target="_blank">unshuffled</a></li>
+		</ul>
+	</li>
+	<li>Zip: To get the file that should be transmitted to IDES
+		<ul>
+		<li><a href="api/getFatcaClients.php?format=zip&shuffle=true"  target="_blank">shuffled</a></li>
+		<li><a href="api/getFatcaClients.php?format=zip&shuffle=false" target="_blank">unshuffled</a></li>
+		</ul>
+	</li>
+	</ol>
+</li>
+<li><a href="http://192.168.125.54/odywiki2/index.php/FATCA_IDES_registration">Further reading</a></li>
+<li>
+	File received:
+	<form action="api/receiver.php" method="POST" target="_blank" enctype="multipart/form-data">
+	<input type="file" name="myFile" />
+	<input type="submit">
+	</form>
+</li>
+</ol>
 </body>
 </html>

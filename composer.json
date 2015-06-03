@@ -1,0 +1,19 @@
+{
+    "name":"shadiakiki1986/IDES-Data-Preparation-Php",
+    "description":"Server-side for preparation of IDES submission file",
+    "keywords":["IDES"],
+    "type":"project",
+    "license":"CC0 1.0 Universal",
+    "authors":[
+        {
+            "name":"Shadi Akiki",
+            "email":"s.akiki@ffaprivatebank.com"
+        }
+    ],
+    "homepage": "https://akikieng.com/shadi",
+    "minimum-stability": "stable",
+    "require":{
+        "php":">=5.3.5",
+        "robrichards/xmlseclibs":"*"
+    }
+}

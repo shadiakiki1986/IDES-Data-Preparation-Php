@@ -11,7 +11,7 @@
             http://www.irs.gov/file_source/pub/fatca/FATCAXMLSchemav1.zip
  Usage:
  	CLI
- 		php getFatcaClients.php [format=html(default)|xml|zip]
+ 		php getFatcaClients.php [format=html(default)|xml|zip] [shuffle=true(default)|false]
 
  	Ajax
 		$.ajax({
@@ -31,22 +31,25 @@ require_once dirname(__FILE__).'/../../../config.php'; // copy the provided samp
 require_once ROOT_DB_API.'/lib/MarketflowClient.php';
 require_once ROOT_DB_API.'/var/www/api/argsProcessor.php';
 require_once ROOT_IDES_DATA.'/lib/libxml_helpers.php';
-require_once ROOT_IDES_DATA.'/lib/FatcaClientsAdapter.php';
+require_once ROOT_IDES_DATA.'/lib/Transmitter.php';
 require_once ROOT_IDES_DATA.'/lib/array2shuffledLetters.php';
 
 try {
 	if(!array_key_exists("format",$_GET)) $_GET['format']="html"; # default
 	if(!in_array($_GET['format'],array("html","xml","zip"))) throw new Exception("Unsupported format. Please use html or xml");
+	if(!array_key_exists("shuffle",$_GET)) $_GET['shuffle']="true"; # default
+	if(!in_array($_GET['shuffle'],array("true","false"))) throw new Exception("Unsupported shuffle. Please use true or false");
+	$_GET['shuffle']=($_GET['shuffle']=="true");
 
 	// retrieval from mf db table
 	$mfDb=new MarketflowClient($base,$location);
 	$di=$mfDb->getFatcaClients();
-	$di=array2shuffledLetters($di,array("ResidenceCountry"));
+	if($_GET['shuffle']) $di=array2shuffledLetters($di,array("ResidenceCountry"));
 	$mfDb->disconnect();
 
 	if(count($di)==0) throw new Exception("No data");
 
-	$fca=new FatcaClientsAdapter($di);
+	$fca=new Transmitter($di);
 	$fca->toXml(); # convert to xml 
 
 	if(!$fca->validateXml()) {# validate
