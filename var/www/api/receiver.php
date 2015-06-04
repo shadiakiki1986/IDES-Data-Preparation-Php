@@ -1,15 +1,15 @@
 <?php
-   header( "Expires: Mon, 20 Dec 1998 01:00:00 GMT" );
-  header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
-  header( "Cache-Control: no-cache, must-revalidate" );
-  header( "Pragma: no-cache" );
+if (isset($_FILES['myFile'])) {
+	header( "Expires: Mon, 20 Dec 1998 01:00:00 GMT" );
+	header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
+	header( "Cache-Control: no-cache, must-revalidate" );
+	header( "Pragma: no-cache" );
 	header('Content-type: text/xml');
 
-require_once dirname(__FILE__).'/../../../config.php'; // copy the provided sample in repository/config-sample.php
-require_once ROOT_IDES_DATA.'/lib/libxml_helpers.php';
-require_once ROOT_IDES_DATA.'/lib/Receiver.php';
+	require_once dirname(__FILE__).'/../../../config.php'; // copy the provided sample in repository/config-sample.php
+	require_once ROOT_IDES_DATA.'/lib/libxml_helpers.php';
+	require_once ROOT_IDES_DATA.'/lib/Receiver.php';
 
-if (isset($_FILES['myFile'])) {
 	$rx=new Receiver();
 	$rx->fromZip($_FILES['myFile']['tmp_name']);
 	$rx->decryptAesKey();

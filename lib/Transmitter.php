@@ -2,6 +2,7 @@
 
 require_once dirname(__FILE__).'/../config.php';
 require_once ROOT_IDES_DATA.'/vendor/autoload.php'; #  if this line throw an error, I probably forgot to run composer install
+require_once ROOT_IDES_DATA.'/lib/newGuid.php';
 
 class Transmitter {
 
@@ -37,8 +38,14 @@ function __construct($dd) {
 	$this->tf3=tempnam("/tmp","");
 	$this->tf4=tempnam("/tmp","");
 
+	date_default_timezone_set('UTC');
 	$this->ts=time();
-	$this->ts2=strftime("%Y-%m-%dT%H:%M:%SZ",$this->ts);
+	// ts2 is xsd:dateTime
+	// http://www.datypic.com/sc/xsd/t-xsd_dateTime.html
+	// Even though the xsd:dateTime supports dates without a timezone,
+	// dropping the Z from here causes the metadata file not to pass the schema
+	// (and a RC004 to be received instead of RC001)
+	$this->ts2=strftime("%Y-%m-%dT%H:%M:%SZ",$this->ts); 
 }
 
 function toHtml() {
@@ -53,9 +60,9 @@ function toXml() {
     $di=$this->data; # $di: output of getFatcaClients
 
     # convert to xml 
+    #        xsi:schemaLocation='urn:oecd:ties:fatca:v1 FatcaXML_v1.1.xsd'
     $diXml=sprintf("
         <ftc:FATCA_OECD version='1.1'
-            xsi:schemaLocation='urn:oecd:ties:fatca:v1 FatcaXML_v1.1.xsd'
             xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
             xmlns:sfa='urn:oecd:ties:stffatcatypes:v1'
             xmlns:ftc='urn:oecd:ties:fatca:v1'>
@@ -65,7 +72,7 @@ function toXml() {
                 <sfa:ReceivingCountry>US</sfa:ReceivingCountry>
                 <sfa:MessageType>FATCA</sfa:MessageType>
                 <sfa:Warning/>
-                <sfa:MessageRefId>DBA6455E-8454-47D9-914B-FEE48E4EF3AA</sfa:MessageRefId>
+                <sfa:MessageRefId>%s</sfa:MessageRefId>
                 <sfa:ReportingPeriod>".strftime("%Y-%m-%d",$this->ts)."</sfa:ReportingPeriod>
                 <sfa:Timestamp>$this->ts2</sfa:Timestamp>
             </ftc:MessageSpec>
@@ -77,8 +84,8 @@ function toXml() {
                         <sfa:AddressFree>Foch street</sfa:AddressFree>
                     </sfa:Address>
                     <ftc:DocSpec>
-                        <ftc:DocTypeIndic>FATCA1</ftc:DocTypeIndic>
-                        <ftc:DocRefId>50B80D2D-79DA-4AFD-8148-F06480FFDEB5</ftc:DocRefId>
+                        <ftc:DocTypeIndic>FATCA11</ftc:DocTypeIndic>
+                        <ftc:DocRefId>Ref ID123</ftc:DocRefId>
                     </ftc:DocSpec>
                 </ftc:ReportingFI>
             <ftc:ReportingGroup>
@@ -86,28 +93,29 @@ function toXml() {
             </ftc:ReportingGroup>
             </ftc:FATCA>
         </ftc:FATCA_OECD>",
+	newGuid(),
         implode(array_map(
             function($x) { return sprintf("
-    <ftc:AccountReport>
-    <ftc:DocSpec>
-    <ftc:DocTypeIndic>FATCA1</ftc:DocTypeIndic>
-    <ftc:DocRefId>50B80D2D-79DA-4AFD-8148-F06480FFDEB5</ftc:DocRefId>
-    </ftc:DocSpec>
-    <ftc:AccountNumber>%s</ftc:AccountNumber>
-    <ftc:AccountHolder>
-    <ftc:Individual>
-        <sfa:Name>
-            <sfa:FirstName>%s</sfa:FirstName>
-            <sfa:LastName>%s</sfa:LastName>
-        </sfa:Name>
-        <sfa:Address>
-            <sfa:CountryCode>%s</sfa:CountryCode>
-            <sfa:AddressFree>%s</sfa:AddressFree>
-        </sfa:Address>
-    </ftc:Individual>
-    </ftc:AccountHolder>
-    <ftc:AccountBalance currCode='USD'>0</ftc:AccountBalance>
-    </ftc:AccountReport>
+		    <ftc:AccountReport>
+		    <ftc:DocSpec>
+		    <ftc:DocTypeIndic>FATCA1</ftc:DocTypeIndic>
+		    <ftc:DocRefId>Ref ID123</ftc:DocRefId>
+		    </ftc:DocSpec>
+		    <ftc:AccountNumber>%s</ftc:AccountNumber>
+		    <ftc:AccountHolder>
+		    <ftc:Individual>
+			<sfa:Name>
+			    <sfa:FirstName>%s</sfa:FirstName>
+			    <sfa:LastName>%s</sfa:LastName>
+			</sfa:Name>
+			<sfa:Address>
+			    <sfa:CountryCode>%s</sfa:CountryCode>
+			    <sfa:AddressFree>%s</sfa:AddressFree>
+			</sfa:Address>
+		    </ftc:Individual>
+		    </ftc:AccountHolder>
+		    <ftc:AccountBalance currCode='USD'>0</ftc:AccountBalance>
+		    </ftc:AccountReport>
                 ",
                 $x['ENT_COD'],
                 $x['ENT_FIRSTNAME'],
