@@ -3,6 +3,8 @@
 * generating new ID''s instead of static one in MessageRefId
 * setting timezone to UTC
 * DocRefID: currently just putting ''Ref ID123''
+* getting balances from Bankflow instead of dummy 0''s
+* skipping some accounts just for testing purposes
 
 2015-06-03
 * testing in 2nd window

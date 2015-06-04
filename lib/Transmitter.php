@@ -21,7 +21,7 @@ var $aesEncrypted;
 var $ts;
 var $file_name;
 
-function __construct($dd) {
+function __construct($dd,$skipZeros=false) {
 	$this->data=$dd;
 
 	// following http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schema-Best-Practices-for-Form-8966
@@ -30,9 +30,21 @@ function __construct($dd) {
 		$reps=array(":","#",",","-",".","--","/");
 		$x['ENT_ADDRESS']=str_replace($reps," ",$x['ENT_ADDRESS']);
 		$x['ENT_FATCA_ID']=str_replace($reps," ",$x['ENT_FATCA_ID']);
+		$x['ENT_FATCA_ID']=str_replace(array("S","N"," "),"",$x['ENT_FATCA_ID']);
 		return $x;
 	}, $this->data);
 
+	// This is only for testing purposes
+	if($skipZeros) {
+		// skipping entity accounts with 0 balances
+		$this->data=array_map(function($x) { $x['accounts']=array_filter($x['accounts'],function($y) { return $y['posCur']!=0; }); return $x; }, $this->data);
+		// temporarily skipping non-USD accounts just for testing
+		$this->data=array_map(function($x) { $x['accounts']=array_filter($x['accounts'],function($y) { return $y['cur']=='USD'; }); return $x; }, $this->data);
+		// skipping entities without accounts
+		$this->data=array_filter($this->data,function($x) { return count($x['accounts'])>0; });
+	}
+
+	// reserving some filenames
 	$this->tf1=tempnam("/tmp","");
 	$this->tf2=tempnam("/tmp","");
 	$this->tf3=tempnam("/tmp","");
@@ -49,10 +61,28 @@ function __construct($dd) {
 }
 
 function toHtml() {
+
 	return sprintf("<table border=1>%s%s</table>",
 		implode(array_map(function($x) { return "<th>".$x."</th>"; },array_keys($this->data[0]))),
 		implode(
-		array_map(function($y) { return "<tr>".implode(array_map(function($x) { return "<td>".$x."</td>"; },$y))."</tr>"; },$this->data)
+		array_map(function($y) {
+			return "<tr>".implode(array_map(function($x) {
+				if(!is_array($x)) {
+					return "<td>".$x."</td>";
+				} else {
+					return sprintf("<td><ul>%s</ul></td>",
+						implode("",
+							array_map(function($z) {
+								return sprintf("<li>%s %s%s</li>",
+									$z["posCur"],
+									$z["cur"],
+									($z["CLI_CLOSED_DATE"]?sprintf(" (%s)",$z["CLI_CLOSED_DATE"]):"")
+								);
+							},$x)
+						)
+					);
+				}
+			},$y))."</tr>"; },$this->data)
 		));
 }
 
@@ -98,12 +128,13 @@ function toXml() {
             function($x) { return sprintf("
 		    <ftc:AccountReport>
 		    <ftc:DocSpec>
-		    <ftc:DocTypeIndic>FATCA1</ftc:DocTypeIndic>
+		    <ftc:DocTypeIndic>FATCA11</ftc:DocTypeIndic>
 		    <ftc:DocRefId>Ref ID123</ftc:DocRefId>
 		    </ftc:DocSpec>
 		    <ftc:AccountNumber>%s</ftc:AccountNumber>
 		    <ftc:AccountHolder>
 		    <ftc:Individual>
+			<sfa:TIN issuedBy='US'>%s</sfa:TIN>
 			<sfa:Name>
 			    <sfa:FirstName>%s</sfa:FirstName>
 			    <sfa:LastName>%s</sfa:LastName>
@@ -114,14 +145,16 @@ function toXml() {
 			</sfa:Address>
 		    </ftc:Individual>
 		    </ftc:AccountHolder>
-		    <ftc:AccountBalance currCode='USD'>0</ftc:AccountBalance>
+		    %s
 		    </ftc:AccountReport>
                 ",
                 $x['ENT_COD'],
+                $x['ENT_FATCA_ID'],
                 $x['ENT_FIRSTNAME'],
                 $x['ENT_LASTNAME'],
                 $x['ResidenceCountry'],
-                $x['ENT_ADDRESS']
+                $x['ENT_ADDRESS'],
+		implode("",array_map(function($y) { return sprintf("<ftc:AccountBalance currCode='%s'>%s</ftc:AccountBalance>",$y['cur'],$y['posCur']); }, $x['accounts']))
                 ); },
             $di
         ),"\n")
