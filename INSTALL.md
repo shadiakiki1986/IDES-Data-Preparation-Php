@@ -14,6 +14,8 @@ This repository depends on having a php class that can return client data. In my
 * Download the files indicated above in the Pre-Requisites section
 * Copy the file in config-sample.php in the root folder
 * Edit the paths config.php to match with the installation/download locations
+* Copy the file in lib/getFatcaData-SAMPL.php to lib/getFatcaData.php in the same folder
+* Edit it to get the data from your own data source
 * Publish the contents of var/www in apache2 by using the sample config file provided in etc/apache2/sites-available/IDES-Data-Preparation-Php-sample.conf
 ** Refer to standard apache2 guides on publishing websites
 * Navigate in your browser to http://your-server/IDES-Data-Preparation-Php and get your data in html, xml, or zip format

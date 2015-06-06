@@ -34,16 +34,6 @@ function __construct($dd,$skipZeros=false) {
 		return $x;
 	}, $this->data);
 
-	// This is only for testing purposes
-	if($skipZeros) {
-		// skipping entity accounts with 0 balances
-		$this->data=array_map(function($x) { $x['accounts']=array_filter($x['accounts'],function($y) { return $y['posCur']!=0; }); return $x; }, $this->data);
-		// temporarily skipping non-USD accounts just for testing
-		$this->data=array_map(function($x) { $x['accounts']=array_filter($x['accounts'],function($y) { return $y['cur']=='USD'; }); return $x; }, $this->data);
-		// skipping entities without accounts
-		$this->data=array_filter($this->data,function($x) { return count($x['accounts'])>0; });
-	}
-
 	// reserving some filenames
 	$this->tf1=tempnam("/tmp","");
 	$this->tf2=tempnam("/tmp","");
@@ -61,9 +51,9 @@ function __construct($dd,$skipZeros=false) {
 }
 
 function toHtml() {
-
+	$dv=array_values($this->data);
 	return sprintf("<table border=1>%s%s</table>",
-		implode(array_map(function($x) { return "<th>".$x."</th>"; },array_keys($this->data[0]))),
+		implode(array_map(function($x) { return "<th>".$x."</th>"; },array_keys($dv[0]))),
 		implode(
 		array_map(function($y) {
 			return "<tr>".implode(array_map(function($x) {
@@ -145,7 +135,7 @@ function toXml() {
 			</sfa:Address>
 		    </ftc:Individual>
 		    </ftc:AccountHolder>
-		    %s
+		    <ftc:AccountBalance currCode='%s'>%s</ftc:AccountBalance>
 		    </ftc:AccountReport>
                 ",
                 $x['ENT_COD'],
@@ -154,7 +144,8 @@ function toXml() {
                 $x['ENT_LASTNAME'],
                 $x['ResidenceCountry'],
                 $x['ENT_ADDRESS'],
-		implode("",array_map(function($y) { return sprintf("<ftc:AccountBalance currCode='%s'>%s</ftc:AccountBalance>",$y['cur'],$y['posCur']); }, $x['accounts']))
+		"USD",
+		$x['accountsTotalUsd']
                 ); },
             $di
         ),"\n")

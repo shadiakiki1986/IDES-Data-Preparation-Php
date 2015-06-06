@@ -1,3 +1,8 @@
+2015-06-06
+* data source functionality moved to separate function lib/getFatcaData.php
+* refactored var/www/api/getFatcaClients.php to var/www/api/transmitter.php
+* cleaned up code a bit
+
 2015-06-04
 * dropped ''xsi:schemaLocation'' which seems to have been causing ''virus threat''
 * generating new ID''s instead of static one in MessageRefId
