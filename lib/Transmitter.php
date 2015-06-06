@@ -105,7 +105,7 @@ function toXml() {
                     </sfa:Address>
                     <ftc:DocSpec>
                         <ftc:DocTypeIndic>FATCA11</ftc:DocTypeIndic>
-                        <ftc:DocRefId>Ref ID123</ftc:DocRefId>
+                        <ftc:DocRefId>%s</ftc:DocRefId>
                     </ftc:DocSpec>
                 </ftc:ReportingFI>
             <ftc:ReportingGroup>
@@ -114,12 +114,13 @@ function toXml() {
             </ftc:FATCA>
         </ftc:FATCA_OECD>",
 	newGuid(),
+	sprintf("%s.%s",ffaid,newGuid()), // based on http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-Best-Practices-for-Form-8966-DocRefID
         implode(array_map(
             function($x) { return sprintf("
 		    <ftc:AccountReport>
 		    <ftc:DocSpec>
-		    <ftc:DocTypeIndic>FATCA11</ftc:DocTypeIndic>
-		    <ftc:DocRefId>Ref ID123</ftc:DocRefId>
+		    <ftc:DocTypeIndic>%s</ftc:DocTypeIndic>
+		    <ftc:DocRefId>%s</ftc:DocRefId>
 		    </ftc:DocSpec>
 		    <ftc:AccountNumber>%s</ftc:AccountNumber>
 		    <ftc:AccountHolder>
@@ -138,6 +139,8 @@ function toXml() {
 		    <ftc:AccountBalance currCode='%s'>%s</ftc:AccountBalance>
 		    </ftc:AccountReport>
                 ",
+		"FATCA11", // check the xsd
+		sprintf("%s.%s",ffaid,newGuid()), // based on http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-Best-Practices-for-Form-8966-DocRefID
                 $x['ENT_COD'],
                 $x['ENT_FATCA_ID'],
                 $x['ENT_FIRSTNAME'],
