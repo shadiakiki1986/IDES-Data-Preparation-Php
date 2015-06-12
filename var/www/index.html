@@ -1,43 +1,63 @@
 <html>
 <body>
 <h1>IDES Data Preparation</h1>
-<ol>
+<ul>
 <li>IDES Gateway: 
-	<ol>
+	<ul>
 	<li><a href="https://wwwpse.idesgateway.com/"  target="_blank">test</a></li>
 	<li><a href="https://www.idesgateway.com/"     target="_blank">live</a></li>
-	</ol>
+	</ul>
 </li>
 <li>
 	Data transmittable to IDES for Fatca
-	<ol>
-	<li>HTML: To see data in tabular format
-		<ul>
-		<li><a href="api/transmitter.php?format=html&shuffle=true"  target="_blank">shuffled</a></li>
-		<li><a href="api/transmitter.php?format=html&shuffle=false" target="_blank">unshuffled</a></li>
-		</ul>
+	<ul>
+	<li>Format&nbsp;<select id="format"><option value="html" selected>HTML</option><option value="xml">XML</option><option value="zip">Zip</option></select>
+		<small><ul>
+		<li>HTML: To see data in tabular format</li>
+		<li>Xml: To see the data as it is stored in the file to be transmitted to IDES</li>
+		<li>Zip: To get the file that should be transmitted to IDES</li>
+		</ul></small>
 	</li>
-	<li>Xml: To see the data as it is stored in the file to be transmitted to IDES
-		<ul>
-		<li><a href="api/transmitter.php?format=xml&shuffle=true"  target="_blank">shuffled</a></li>
-		<li><a href="api/transmitter.php?format=xml&shuffle=false" target="_blank">unshuffled</a></li>
-		</ul>
-	</li>
-	<li>Zip: To get the file that should be transmitted to IDES
-		<ul>
-		<li><a href="api/transmitter.php?format=zip&shuffle=true"  target="_blank">shuffled</a></li>
-		<li><a href="api/transmitter.php?format=zip&shuffle=false" target="_blank">unshuffled</a></li>
-		</ul>
-	</li>
-	</ol>
+	<li><input type="checkbox" id="shuffled">&nbsp;Shuffled</li>
+	<li>Document reference ID being corrected: <input type="text" id="corrDocRefId"></li>
+	<li><a href="api/transmitter.php?format=html&shuffle=false" target="_blank" id="datalink">Get data</a></li>
+	</ul>
 </li>
 <li>
-	File received:
+	File received from IDES:
 	<form action="api/receiver.php" method="POST" target="_blank" enctype="multipart/form-data">
-	<input type="file" name="myFile" />
-	<input type="submit">
+	<input type="file" name="myFile" id="myFile" accept="application/zip">
+	<input type="submit" value="Read" disabled id="submitBtn" >
 	</form>
 </li>
-</ol>
+</ul>
+<script type="text/javascript">
+document.getElementById('shuffled').onchange=
+document.getElementById('format').onchange=
+document.getElementById('corrDocRefId').onchange=function(e) {
+	f=document.getElementById("format").value;
+	s=document.getElementById("shuffled").checked;
+	c=document.getElementById("corrDocRefId").value;
+	h="api/transmitter.php?format="+f+"&shuffle="+(s?"true":"false");
+	if(c.length>0) {
+		h+="&CorrDocRefId="+c;
+	} 
+	document.getElementById("datalink").href=h;
+}
+
+document.getElementById('myFile').onchange = function(e) {
+    var ext = this.value.match(/\.([^\.]+)$/)[1];
+    switch(ext)
+    {
+        case 'zip':
+            document.getElementById('submitBtn').disabled=false;
+            break;
+        default:
+            alert('Files other than Zip not allowed');
+            this.value='';
+            document.getElementById('submitBtn').disabled=true;
+    }
+}
+</script>
 </body>
 </html>

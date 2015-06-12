@@ -39,48 +39,48 @@ if(!file_exists(ROOT_IDES_DATA.'/lib/getFatcaData.php')) {
 	require_once ROOT_IDES_DATA.'/lib/getFatcaData.php';
 }
 
-try {
-	if(!array_key_exists("format",$_GET)) $_GET['format']="html"; # default
-	if(!in_array($_GET['format'],array("html","xml","zip"))) throw new Exception("Unsupported format. Please use html or xml");
-	if(!array_key_exists("shuffle",$_GET)) $_GET['shuffle']="true"; # default
-	if(!in_array($_GET['shuffle'],array("true","false"))) throw new Exception("Unsupported shuffle. Please use true or false");
-	$_GET['shuffle']=($_GET['shuffle']=="true");
+if(!array_key_exists("format",$_GET)) $_GET['format']="html"; # default
+if(!in_array($_GET['format'],array("html","xml","zip"))) throw new Exception("Unsupported format. Please use html or xml");
 
-	// retrieval from mf db table
-	$di=getFatcaData();
-	if(count($di)==0) throw new Exception("No data");
-	if($_GET['shuffle']) $di=array2shuffledLetters($di,array("ResidenceCountry","ENT_COD","accountsTotalUsd")); // shuffle all fields except these
+if(!array_key_exists("shuffle",$_GET)) $_GET['shuffle']="true"; # default
+if(!in_array($_GET['shuffle'],array("true","false"))) throw new Exception("Unsupported shuffle. Please use true or false");
+$_GET['shuffle']=($_GET['shuffle']=="true");
 
-	$fca=new Transmitter($di,true);
-	$fca->toXml(); # convert to xml 
+if(!array_key_exists("CorrDocRefId",$_GET)) $_GET['CorrDocRefId']=false;
 
-	if(!$fca->validateXml()) {# validate
-	    print '<b>DOMDocument::schemaValidate() Generated Errors!</b>';
-	    libxml_display_errors();
-	    exit;
-	}
+// retrieval from mf db table
+$di=getFatcaData();
+if(count($di)==0) throw new Exception("No data");
+if($_GET['shuffle']) $di=array2shuffledLetters($di,array("ResidenceCountry","ENT_COD","accountsTotalUsd")); // shuffle all fields except these
 
-	$diXml2=$fca->toXmlSigned();
-	if(!$fca->verifyXmlSigned()) die("Verification of signature failed");
+$fca=new Transmitter($di,$_GET['shuffle'],$_GET['CorrDocRefId']);
+$fca->toXml(); # convert to xml 
 
-	$fca->toCompressed();
-	$fca->toEncrypted();
-	$fca->encryptAesKeyFile();
+if(!$fca->validateXml()) {# validate
+    print '<b>DOMDocument::schemaValidate() Generated Errors!</b>';
+    libxml_display_errors();
+    exit;
+}
+
+$diXml2=$fca->toXmlSigned();
+if(!$fca->verifyXmlSigned()) die("Verification of signature failed");
+
+$fca->toCompressed();
+$fca->toEncrypted();
+$fca->encryptAesKeyFile();
 //	if(!$fca->verifyAesKeyFileEncrypted()) die("Verification of aes key encryption failed");
-	$fca->toZip();
+$fca->toZip();
 
-	switch($_GET['format']) {
-		case "html":
-			echo($fca->toHtml());
-			break;
-		case "xml":
-			Header('Content-type: text/xml');
-			echo($fca->addHeader($diXml2));
-			break;
-		case "zip":
-			$fca->getZip();
-			break;
-		default: throw new Exception("Unsupported format ".$_GET['format']);
-	}
-} catch(Exception $e) { echo json_encode(array('error'=>$e->getMessage())); }
-
+switch($_GET['format']) {
+	case "html":
+		echo($fca->toHtml());
+		break;
+	case "xml":
+		Header('Content-type: text/xml');
+		echo($fca->addHeader($diXml2));
+		break;
+	case "zip":
+		$fca->getZip();
+		break;
+	default: throw new Exception("Unsupported format ".$_GET['format']);
+}

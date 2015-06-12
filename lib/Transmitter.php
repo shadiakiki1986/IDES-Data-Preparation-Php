@@ -20,9 +20,25 @@ var $tf4;
 var $aesEncrypted;
 var $ts;
 var $file_name;
+var $docType;
+var $corrDocRefId;
 
-function __construct($dd,$skipZeros=false) {
+function __construct($dd,$isTest,$corrDocRefId) {
+// dd: 2d array with fatca-relevant fields
+// isTest: true|false whether the data is test data. This will only help set the DocTypeIndic field in the XML file
+// corrDocRefId: false|message ID. If this is a correction of a previous message, pass the message ID in subject, otherwise just pass false
+
 	$this->data=$dd;
+	$this->corrDocRefId=$corrDocRefId;
+	$this->docType=sprintf("FATCA%s%s",$isTest?"1":"",$corrDocRefId?"2":"1");
+
+	// Sanity check
+	// docType: described in xsd for DocRefId
+	// FATCA1: New Data, FATCA2: Corrected Data, FATCA3: Void Data, FATCA4: Amended Data
+	// FATCA11: New Test Data, FATCA12: Corrected Test Data, FATCA13: Void Test Data, FATCA14: Amended Test Data
+	$docTypeValid=array("FATCA11","FATCA12","FATCA13","FATCA14","FATCA1","FATCA2","FATCA3","FATCA4");
+	if(!in_array($this->docType,$docTypeValid)) throw new Exception("Unsupported docType. Please use: ".implode(", ",$docTypeValid));
+
 
 	// following http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schema-Best-Practices-for-Form-8966
 	// the hash in an address should be replaced
@@ -78,6 +94,7 @@ function toHtml() {
 
 function toXml() {
     $di=$this->data; # $di: output of getFatcaClients
+    $docType=$this->docType;
 
     # convert to xml 
     #        xsi:schemaLocation='urn:oecd:ties:fatca:v1 FatcaXML_v1.1.xsd'
@@ -104,8 +121,9 @@ function toXml() {
                         <sfa:AddressFree>Foch street</sfa:AddressFree>
                     </sfa:Address>
                     <ftc:DocSpec>
-                        <ftc:DocTypeIndic>FATCA11</ftc:DocTypeIndic>
+                        <ftc:DocTypeIndic>%s</ftc:DocTypeIndic>
                         <ftc:DocRefId>%s</ftc:DocRefId>
+			%s
                     </ftc:DocSpec>
                 </ftc:ReportingFI>
             <ftc:ReportingGroup>
@@ -114,9 +132,11 @@ function toXml() {
             </ftc:FATCA>
         </ftc:FATCA_OECD>",
 	newGuid(),
+	$docType, // not sure about this versus the same entry below
 	sprintf("%s.%s",ffaid,newGuid()), // based on http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-Best-Practices-for-Form-8966-DocRefID
+	!$this->corrDocRefId?"":sprintf("<ftc:CorrDocRefId>%s</ftc:CorrDocRefId>",$this->corrDocRefId), 
         implode(array_map(
-            function($x) { return sprintf("
+            function($x) use($docType) { return sprintf("
 		    <ftc:AccountReport>
 		    <ftc:DocSpec>
 		    <ftc:DocTypeIndic>%s</ftc:DocTypeIndic>
@@ -139,7 +159,7 @@ function toXml() {
 		    <ftc:AccountBalance currCode='%s'>%s</ftc:AccountBalance>
 		    </ftc:AccountReport>
                 ",
-		"FATCA11", // check the xsd
+		$docType, // check the xsd
 		sprintf("%s.%s",ffaid,newGuid()), // based on http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-Best-Practices-for-Form-8966-DocRefID
                 $x['ENT_COD'],
                 $x['ENT_FATCA_ID'],
