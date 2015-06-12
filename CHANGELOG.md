@@ -1,5 +1,6 @@
 2015-06-12
 * attempting at integrating correction doc ref ID, but documentation isn''t so clear
+* added taxYear to getFatcaData and interface
 
 2015-06-06
 * data source functionality moved to separate function lib/getFatcaData.php

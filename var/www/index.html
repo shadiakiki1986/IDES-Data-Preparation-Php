@@ -20,7 +20,8 @@
 	</li>
 	<li><input type="checkbox" id="shuffled">&nbsp;Shuffled</li>
 	<li>Document reference ID being corrected: <input type="text" id="corrDocRefId"></li>
-	<li><a href="api/transmitter.php?format=html&shuffle=false" target="_blank" id="datalink">Get data</a></li>
+	<li><select id="taxYear"><option value="2014" selected>2014</option><option value="2015">2015</option><option value="2016">2016</option></select></li>
+	<li><a href="api/transmitter.php?format=html&shuffle=false&taxYear=2014" target="_blank" id="datalink">Get data</a></li>
 	</ul>
 </li>
 <li>
@@ -34,11 +35,13 @@
 <script type="text/javascript">
 document.getElementById('shuffled').onchange=
 document.getElementById('format').onchange=
-document.getElementById('corrDocRefId').onchange=function(e) {
+document.getElementById('corrDocRefId').onchange=
+document.getElementById('taxYear').onchange=function(e) {
 	f=document.getElementById("format").value;
 	s=document.getElementById("shuffled").checked;
 	c=document.getElementById("corrDocRefId").value;
-	h="api/transmitter.php?format="+f+"&shuffle="+(s?"true":"false");
+	y=document.getElementById("taxYear").value;
+	h="api/transmitter.php?format="+f+"&shuffle="+(s?"true":"false")+"&taxYear="+y;
 	if(c.length>0) {
 		h+="&CorrDocRefId="+c;
 	} 

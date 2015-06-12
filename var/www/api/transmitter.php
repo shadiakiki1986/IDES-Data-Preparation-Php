@@ -48,8 +48,10 @@ $_GET['shuffle']=($_GET['shuffle']=="true");
 
 if(!array_key_exists("CorrDocRefId",$_GET)) $_GET['CorrDocRefId']=false;
 
+if(!array_key_exists("taxYear",$_GET)) $_GET['taxYear']=2014; else $_GET['taxYear']=(int)$_GET['taxYear'];
+
 // retrieval from mf db table
-$di=getFatcaData();
+$di=getFatcaData($_GET['taxYear']);
 if(count($di)==0) throw new Exception("No data");
 if($_GET['shuffle']) $di=array2shuffledLetters($di,array("ResidenceCountry","ENT_COD","accountsTotalUsd")); // shuffle all fields except these
 
