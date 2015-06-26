@@ -167,7 +167,7 @@ function toXml() {
                 $x['ENT_LASTNAME'],
                 $x['ResidenceCountry'],
                 $x['ENT_ADDRESS'],
-		"USD",
+		$x['cur'],
 		$x['posCur']
                 ); },
             $di
