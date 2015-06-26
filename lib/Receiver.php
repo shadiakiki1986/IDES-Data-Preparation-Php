@@ -182,7 +182,7 @@ function toXml() {
     <ftc:AccountBalance currCode='USD'>0</ftc:AccountBalance>
     </ftc:AccountReport>
                 ",
-                $x['ENT_COD'],
+                $x['Compte'],
                 $x['ENT_FIRSTNAME'],
                 $x['ENT_LASTNAME'],
                 $x['ResidenceCountry'],

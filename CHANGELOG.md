@@ -1,3 +1,6 @@
+2015-06-26
+* refactored ENT_COD to Compte and accountsTotalUsd to posCur
+
 2015-06-12
 * attempting at integrating correction doc ref ID, but documentation isn''t so clear
 * added taxYear to getFatcaData and interface

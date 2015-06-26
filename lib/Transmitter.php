@@ -161,14 +161,14 @@ function toXml() {
                 ",
 		$docType, // check the xsd
 		sprintf("%s.%s",ffaid,newGuid()), // based on http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-Best-Practices-for-Form-8966-DocRefID
-                $x['ENT_COD'],
+                $x['Compte'],
                 $x['ENT_FATCA_ID'],
                 $x['ENT_FIRSTNAME'],
                 $x['ENT_LASTNAME'],
                 $x['ResidenceCountry'],
                 $x['ENT_ADDRESS'],
 		"USD",
-		$x['accountsTotalUsd']
+		$x['posCur']
                 ); },
             $di
         ),"\n")
