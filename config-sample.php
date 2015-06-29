@@ -14,6 +14,7 @@ define('FatcaCrt',"path/to/ssl_certificate.crt");// FFA certificate bought using
 define('FatcaKeyPrivate',"path/to/ffa-fatca-private.pem"); // FFA Private key used to get the FFA SSL certificate
 define('FatcaKeyPublic',"path/to/ffa-fatca-public.pem"); // FFA public key extracted out of private key above
 define('FatcaIrsPublic','path/to/encryption-service_services_irs_gov.crt'); // IRS public key from https://ides-support.com/Downloads/encryption-service_services_irs_gov.crt
+define('MetadataXsd','path/to/FATCA IDES SENDER FILE METADATA XML LIBRARY/FATCA-IDES-SenderFileMetadata-1.0.xsd');
 
 # Fatca GIIN's
 define('ffaid','000000.00000.AA.000'); // Sender GIIN

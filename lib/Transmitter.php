@@ -189,11 +189,26 @@ function addHeader($x) {
 	return $x;
 }
 
-function validateXml() {
+function validateXml($whch="payload") {
 	# validate
-	$xml=DOMDocument::loadXML($this->addHeader($this->dataXml));
-	return ($xml->schemaValidate(FatcaXsd));
+	$xml="";
+	$xsd="";
+	switch($whch) {
+	case "payload":
+		$xml=$this->dataXml;
+		$xsd=FatcaXsd;
+		break;
+	case "metadata":
+		$xml=$this->getMetadata();
+		$xsd=MetadataXsd;
+		break;
+	default: throw new Exception("Invalid xml file to validate");
+	}
+
+	$xmlDom=DOMDocument::loadXML($this->addHeader($xml));
+	return $xmlDom->schemaValidate($xsd);
 }
+
 
 function toXmlSigned() {
 // using https://github.com/robrichards/xmlseclibs

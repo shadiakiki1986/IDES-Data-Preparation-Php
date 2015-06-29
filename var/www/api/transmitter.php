@@ -40,7 +40,7 @@ if(!file_exists(ROOT_IDES_DATA.'/lib/getFatcaData.php')) {
 }
 
 if(!array_key_exists("format",$_GET)) $_GET['format']="html"; # default
-if(!in_array($_GET['format'],array("html","xml","zip"))) throw new Exception("Unsupported format. Please use html or xml");
+if(!in_array($_GET['format'],array("html","xml","zip","metadata"))) throw new Exception("Unsupported format. Please use one of: html, xml, zip, metadata");
 
 if(!array_key_exists("shuffle",$_GET)) $_GET['shuffle']="true"; # default
 if(!in_array($_GET['shuffle'],array("true","false"))) throw new Exception("Unsupported shuffle. Please use true or false");
@@ -58,11 +58,18 @@ if($_GET['shuffle']) $di=array2shuffledLetters($di,array("ResidenceCountry","pos
 $fca=new Transmitter($di,$_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear']);
 $fca->toXml(); # convert to xml 
 
-if(!$fca->validateXml()) {# validate
-    print '<b>DOMDocument::schemaValidate() Generated Errors!</b>';
+if(!$fca->validateXml("payload")) {# validate
+    print 'Payload xml did not pass its xsd validation';
     libxml_display_errors();
     exit;
 }
+
+if(!$fca->validateXml("metadata")) {# validate
+    print 'Metadata xml did not pass its xsd validation';
+    libxml_display_errors();
+    exit;
+}
+
 
 $diXml2=$fca->toXmlSigned();
 if(!$fca->verifyXmlSigned()) die("Verification of signature failed");
@@ -83,6 +90,10 @@ switch($_GET['format']) {
 		break;
 	case "zip":
 		$fca->getZip();
+		break;
+	case "metadata":
+		Header('Content-type: text/xml');
+		echo($fca->addHeader($fca->getMetadata()));
 		break;
 	default: throw new Exception("Unsupported format ".$_GET['format']);
 }
