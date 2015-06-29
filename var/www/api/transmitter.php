@@ -55,7 +55,7 @@ $di=getFatcaData($_GET['taxYear']);
 if(count($di)==0) throw new Exception("No data");
 if($_GET['shuffle']) $di=array2shuffledLetters($di,array("ResidenceCountry","Compte","posCur")); // shuffle all fields except these
 
-$fca=new Transmitter($di,$_GET['shuffle'],$_GET['CorrDocRefId']);
+$fca=new Transmitter($di,$_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear']);
 $fca->toXml(); # convert to xml 
 
 if(!$fca->validateXml()) {# validate

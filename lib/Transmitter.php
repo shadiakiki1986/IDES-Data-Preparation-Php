@@ -22,8 +22,9 @@ var $ts;
 var $file_name;
 var $docType;
 var $corrDocRefId;
+var $taxYear;
 
-function __construct($dd,$isTest,$corrDocRefId) {
+function __construct($dd,$isTest,$corrDocRefId,$taxYear) {
 // dd: 2d array with fatca-relevant fields
 // isTest: true|false whether the data is test data. This will only help set the DocTypeIndic field in the XML file
 // corrDocRefId: false|message ID. If this is a correction of a previous message, pass the message ID in subject, otherwise just pass false
@@ -31,6 +32,7 @@ function __construct($dd,$isTest,$corrDocRefId) {
 	$this->data=$dd;
 	$this->corrDocRefId=$corrDocRefId;
 	$this->docType=sprintf("FATCA%s%s",$isTest?"1":"",$corrDocRefId?"2":"1");
+	$this->taxYear=$taxYear;
 
 	// Sanity check
 	// docType: described in xsd for DocRefId
@@ -110,7 +112,7 @@ function toXml() {
                 <sfa:MessageType>FATCA</sfa:MessageType>
                 <sfa:Warning/>
                 <sfa:MessageRefId>%s</sfa:MessageRefId>
-                <sfa:ReportingPeriod>".strftime("%Y-%m-%d",$this->ts)."</sfa:ReportingPeriod>
+                <sfa:ReportingPeriod>".sprintf("%s-12-31",$this->taxYear)."</sfa:ReportingPeriod>
                 <sfa:Timestamp>$this->ts2</sfa:Timestamp>
             </ftc:MessageSpec>
             <ftc:FATCA>
