@@ -135,7 +135,8 @@ function toXml() {
         </ftc:FATCA_OECD>",
 	newGuid(),
 	$docType, // not sure about this versus the same entry below
-	sprintf("%s.%s",ffaid,newGuid()), // based on http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-Best-Practices-for-Form-8966-DocRefID
+	//sprintf("%s.%s",ffaid,newGuid()), // based on http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-Best-Practices-for-Form-8966-DocRefID
+	newGuid(),
 	!$this->corrDocRefId?"":sprintf("<ftc:CorrDocRefId>%s</ftc:CorrDocRefId>",$this->corrDocRefId), 
         implode(array_map(
             function($x) use($docType) { return sprintf("
@@ -162,7 +163,8 @@ function toXml() {
 		    </ftc:AccountReport>
                 ",
 		$docType, // check the xsd
-		sprintf("%s.%s",ffaid,newGuid()), // based on http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-Best-Practices-for-Form-8966-DocRefID
+		//sprintf("%s.%s",ffaid,newGuid()), // based on http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-Best-Practices-for-Form-8966-DocRefID
+		newGuid(),
                 $x['Compte'],
                 $x['ENT_FATCA_ID'],
                 $x['ENT_FIRSTNAME'],
@@ -334,7 +336,7 @@ var_dump($temp);
 			<FATCAEntCommunicationTypeCd>RPT</FATCAEntCommunicationTypeCd>
 			<SenderFileId>'.$this->file_name.'</SenderFileId>
 			<FileCreateTs>'.$this->ts2.'</FileCreateTs>
-			<TaxYear>'.strftime("%Y",$this->ts).'</TaxYear>
+			<TaxYear>'.$this->taxYear.'</TaxYear>
 			<FileRevisionInd>false</FileRevisionInd>
 		</FATCAIDESSenderFileMetadata>';
 		return $md;

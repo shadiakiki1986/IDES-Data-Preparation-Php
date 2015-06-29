@@ -53,7 +53,7 @@ if(!array_key_exists("taxYear",$_GET)) $_GET['taxYear']=2014; else $_GET['taxYea
 // retrieval from mf db table
 $di=getFatcaData($_GET['taxYear']);
 if(count($di)==0) throw new Exception("No data");
-if($_GET['shuffle']) $di=array2shuffledLetters($di,array("ResidenceCountry","Compte","posCur")); // shuffle all fields except these
+if($_GET['shuffle']) $di=array2shuffledLetters($di,array("ResidenceCountry","posCur","cur")); // shuffle all fields except these... ,"Compte"
 
 $fca=new Transmitter($di,$_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear']);
 $fca->toXml(); # convert to xml 
