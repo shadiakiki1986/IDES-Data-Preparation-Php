@@ -47,6 +47,13 @@ function __construct($dd,$isTest,$corrDocRefId,$taxYear) {
 	$this->data=array_map(function($x) {
 		$reps=array(":","#",",","-",".","--","/");
 		$x['ENT_ADDRESS']=str_replace($reps," ",$x['ENT_ADDRESS']);
+		$x['ENT_ADDRESS']=preg_replace('/\s\s+/',' ',$x['ENT_ADDRESS']);
+		$x['ENT_ADDRESS']=str_replace("1st","First",$x['ENT_ADDRESS']);
+		$x['ENT_ADDRESS']=str_replace("9th","Ninth",$x['ENT_ADDRESS']);
+		$x['ENT_ADDRESS']=str_replace("6th","Sixth",$x['ENT_ADDRESS']);
+		$x['ENT_ADDRESS']=str_replace("6TH","Sixth",$x['ENT_ADDRESS']);
+		$x['ENT_ADDRESS']=str_replace("3rd","Third",$x['ENT_ADDRESS']);
+		$x['ENT_ADDRESS']=str_replace("8TH","Eighth",$x['ENT_ADDRESS']);
 		$x['ENT_FATCA_ID']=str_replace($reps," ",$x['ENT_FATCA_ID']);
 		$x['ENT_FATCA_ID']=str_replace(array("S","N"," "),"",$x['ENT_FATCA_ID']);
 		return $x;
@@ -238,6 +245,11 @@ function toXmlSigned() {
 		$xx=$objDSig->addObject($doc2->documentElement);
 
 		$this->dataXmlSigned = $xx->ownerDocument->saveXML();
+
+		// character replacements to avoid the security threat
+		$this->dataXmlSigned=str_replace("http://www.w3.org/2001/10/xml-exc-c14n#","http://www.w3.org/TR/2001/REC-xml-c14n-20010315",$this->dataXmlSigned);
+		$this->dataXmlSigned=str_replace("http://www.w3.org/2000/09/xmldsig#enveloped-signature","http://www.w3.org/TR/2001/REC-xml-c14n-20010315",$this->dataXmlSigned);
+
 		return $this->dataXmlSigned;
 	}
 
@@ -286,13 +298,13 @@ function toXmlSigned() {
 		$text = $this->dataCompressed;
 		$crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->aeskey, $text, "ecb");
 
-		// add PCKS7 padding
+/*		// add PCKS7 padding
 		// http://php.net/manual/en/function.mcrypt-encrypt.php#47973
 		$block = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, 'ecb');
 		$len = strlen($crypttext);
 		$padding = $block - ($len % $block);
 		$crypttext .= str_repeat(chr($padding),$padding);
-
+*/
 		$this->dataEncrypted=$crypttext;
 	}
 
@@ -349,7 +361,7 @@ var_dump($temp);
 			<FATCAEntitySenderId>'.ffaid.'</FATCAEntitySenderId>
 			<FATCAEntityReceiverId>000000.00000.TA.840</FATCAEntityReceiverId>
 			<FATCAEntCommunicationTypeCd>RPT</FATCAEntCommunicationTypeCd>
-			<SenderFileId>'.$this->file_name.'</SenderFileId>
+			<SenderFileId>'.rand(1,9999999).'</SenderFileId>
 			<FileCreateTs>'.$this->ts2.'</FileCreateTs>
 			<TaxYear>'.$this->taxYear.'</TaxYear>
 			<FileRevisionInd>false</FileRevisionInd>
