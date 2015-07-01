@@ -19,6 +19,8 @@ var $tf3;
 var $tf4;
 var $aesEncrypted;
 var $ts;
+var $ts2;
+var $ts3;
 var $file_name;
 var $docType;
 var $corrDocRefId;
@@ -73,6 +75,7 @@ function __construct($dd,$isTest,$corrDocRefId,$taxYear) {
 	// dropping the Z from here causes the metadata file not to pass the schema
 	// (and a RC004 to be received instead of RC001)
 	$this->ts2=strftime("%Y-%m-%dT%H:%M:%SZ",$this->ts); 
+	$this->ts3=strftime("%Y-%m-%dT%H:%M:%S", $this->ts); 
 }
 
 function toHtml() {
@@ -120,7 +123,7 @@ function toXml() {
                 <sfa:Warning/>
                 <sfa:MessageRefId>%s</sfa:MessageRefId>
                 <sfa:ReportingPeriod>".sprintf("%s-12-31",$this->taxYear)."</sfa:ReportingPeriod>
-                <sfa:Timestamp>$this->ts2</sfa:Timestamp>
+                <sfa:Timestamp>$this->ts3</sfa:Timestamp>
             </ftc:MessageSpec>
             <ftc:FATCA>
                 <ftc:ReportingFI>
@@ -146,7 +149,9 @@ function toXml() {
 	newGuid(),
 	!$this->corrDocRefId?"":sprintf("<ftc:CorrDocRefId>%s</ftc:CorrDocRefId>",$this->corrDocRefId), 
         implode(array_map(
-            function($x) use($docType) { return sprintf("
+            function($x) use($docType) {
+		
+		return sprintf("
 		    <ftc:AccountReport>
 		    <ftc:DocSpec>
 		    <ftc:DocTypeIndic>%s</ftc:DocTypeIndic>

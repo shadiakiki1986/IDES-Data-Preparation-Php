@@ -72,6 +72,7 @@ if(!$fca->validateXml("metadata")) {# validate
 
 
 $diXml2=$fca->toXmlSigned();
+//$diXml2=$fca->dataXml;
 if(!$fca->verifyXmlSigned()) die("Verification of signature failed");
 
 $fca->toCompressed();
