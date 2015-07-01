@@ -10,7 +10,7 @@ function newGuid() {
         substr($s,12,4). '-' . 
         substr($s,16,4). '-' . 
         substr($s,20); 
-//    $guidText=str_replace("-","",$guidText);
+    $guidText=str_replace("-","",$guidText);
     return $guidText;
 }
 // End Generate Guid 

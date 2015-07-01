@@ -150,7 +150,7 @@ function toXml() {
 	!$this->corrDocRefId?"":sprintf("<ftc:CorrDocRefId>%s</ftc:CorrDocRefId>",$this->corrDocRefId), 
         implode(array_map(
             function($x) use($docType) {
-		
+		// TIN default  issuedBy='US'
 		return sprintf("
 		    <ftc:AccountReport>
 		    <ftc:DocSpec>
@@ -160,7 +160,7 @@ function toXml() {
 		    <ftc:AccountNumber>%s</ftc:AccountNumber>
 		    <ftc:AccountHolder>
 		    <ftc:Individual>
-			<sfa:TIN issuedBy='US'>%s</sfa:TIN>
+			<sfa:TIN>%s</sfa:TIN>
 			<sfa:Name>
 			    <sfa:FirstName>%s</sfa:FirstName>
 			    <sfa:LastName>%s</sfa:LastName>
@@ -235,25 +235,19 @@ function toXmlSigned() {
 		// Sign using SHA-256
 		$objDSig->addReference(
 		    $doc,
-		    XMLSecurityDSig::SHA256,
-		    array('http://www.w3.org/2000/09/xmldsig#enveloped-signature')
+		    XMLSecurityDSig::SHA256//,
+		    //array('http://www.w3.org/2000/09/xmldsig#enveloped-signature')
 		);
 
 		$objKey = new XMLSecurityKey(XMLSecurityKey::RSA_SHA256, array('type'=>'private'));// Create a new (private) Security key
 		$objKey->loadKey(FatcaKeyPrivate, TRUE);// Load the private key
 		$objDSig->sign($objKey);// Sign the XML file
 		$objDSig->add509Cert(file_get_contents(FatcaCrt));// Add the associated public key to the signature
-		$objDSig->appendSignature($doc->documentElement);// Append the signature to the XML
+//		$objDSig->appendSignature($doc->documentElement);// Append the signature to the XML
 
-		$doc2 = new DOMDocument();
-		$doc2->loadXML($this->dataXml);
-		$xx=$objDSig->addObject($doc2->documentElement);
+		$xx=$objDSig->addObject($doc->documentElement);
 
 		$this->dataXmlSigned = $xx->ownerDocument->saveXML();
-
-		// character replacements to avoid the security threat
-		$this->dataXmlSigned=str_replace("http://www.w3.org/2001/10/xml-exc-c14n#","http://www.w3.org/TR/2001/REC-xml-c14n-20010315",$this->dataXmlSigned);
-		$this->dataXmlSigned=str_replace("http://www.w3.org/2000/09/xmldsig#enveloped-signature","http://www.w3.org/TR/2001/REC-xml-c14n-20010315",$this->dataXmlSigned);
 
 		return $this->dataXmlSigned;
 	}
@@ -278,7 +272,28 @@ function toXmlSigned() {
 			// free the key from memory
 			openssl_free_key($pubkeyid);
 */
-			return(exec("openssl rsautl -verify -in $this->tf2 -inkey ".FatcaKeyPublic." -pubin")==$this->diDigest);
+
+//			file_put_contents($this->tf2,$this->dataXmlSigned);
+//			$cmd="openssl rsautl -verify -in $this->tf2 -inkey ".FatcaKeyPublic." -pubin";
+//			return(exec($cmd)==$this->diDigest);
+
+// from https://github.com/robrichards/xmlseclibs/blob/00a07354dd443ceb87521e8d78714dcd1e6d2591/tests/xmlsec-verify.phpt
+              $doc = new DOMDocument();
+              $doc->loadXML($this->dataXmlSigned);
+
+		$objXMLSecDSig = new XMLSecurityDSig();
+		$objDSig = $objXMLSecDSig->locateSignature($doc);
+		if (! $objDSig) {
+			throw new Exception("Cannot locate Signature Node");
+		}
+		$objXMLSecDSig->canonicalizeSignedInfo();
+		$objKey = $objXMLSecDSig->locateKey();
+		if (! $objKey ) {
+			throw new Exception("We have no idea about the key");
+		}
+		$objKey->loadKey(FatcaKeyPublic, TRUE);
+
+		return($objXMLSecDSig->verify($objKey));
 	}
 
 	function toCompressed() {
