@@ -39,6 +39,10 @@ if(!file_exists(ROOT_IDES_DATA.'/lib/getFatcaData.php')) {
 	require_once ROOT_IDES_DATA.'/lib/getFatcaData.php';
 }
 
+// check existence
+if(defined(ZipBackupFolder)) if(!file_exists(ZipBackupFolder) || !is_dir(ZipBackupFolder)) throw new Exception("Defined ZipBackupFolder does not exist or is not a folder");
+
+// 
 if(!array_key_exists("format",$_GET)) $_GET['format']="html"; # default
 if(!in_array($_GET['format'],array("html","xml","zip","metadata"))) throw new Exception("Unsupported format. Please use one of: html, xml, zip, metadata");
 
@@ -70,16 +74,17 @@ if(!$fca->validateXml("metadata")) {# validate
     exit;
 }
 
-
 $diXml2=$fca->toXmlSigned();
-//$diXml2=$fca->dataXml;
 if(!$fca->verifyXmlSigned()) die("Verification of signature failed");
 
 $fca->toCompressed();
 $fca->toEncrypted();
 $fca->encryptAesKeyFile();
 //	if(!$fca->verifyAesKeyFileEncrypted()) die("Verification of aes key encryption failed");
-$fca->toZip();
+$fca->toZip(true);
+if(defined(ZipBackupFolder)) copy($fca->tf4, ZipBackupFolder."/includeUnencrypted_".$fca->file_name);
+$fca->toZip(false);
+if(defined(ZipBackupFolder)) copy($fca->tf4,ZipBackupFolder."/submitted_".$fca->file_name);
 
 switch($_GET['format']) {
 	case "html":
@@ -87,14 +92,14 @@ switch($_GET['format']) {
 		break;
 	case "xml":
 		Header('Content-type: text/xml');
-		echo($fca->addHeader($diXml2));
+		echo($diXml2);
 		break;
 	case "zip":
 		$fca->getZip();
 		break;
 	case "metadata":
 		Header('Content-type: text/xml');
-		echo($fca->addHeader($fca->getMetadata()));
+		echo($fca->getMetadata());
 		break;
 	default: throw new Exception("Unsupported format ".$_GET['format']);
 }

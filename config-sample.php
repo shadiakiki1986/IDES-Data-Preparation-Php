@@ -19,3 +19,7 @@ define('MetadataXsd','path/to/FATCA IDES SENDER FILE METADATA XML LIBRARY/FATCA-
 # Fatca GIIN's
 define('ffaid','000000.00000.AA.000'); // Sender GIIN
 define('ffaidReceiver','000000.00000.TA.840'); // IRS GIIN
+
+# make sure www-data is the owner of the below folder
+# sudo chown www-data:www-data path/to/folder
+define('ZipBackupFolder','path/to/folder/in/which/to/save/the/zip/files/for/backup'); // This is in case the references in the unencrypted xml file need to be checked later

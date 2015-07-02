@@ -1,3 +1,9 @@
+2015-07-02
+* after a long struggle to understand why our submission was yielding a security threat alert, I learned that the way I was signing the XML file was wrong.
+* Correcting it resulted in a successful submission
+* I cleaned up the code a bit before making this commit. I probably should have made the messy commit right after the successful submission, and then made a 2nd cleaned up commit... too late now
+* The people from lbi.fatca.ides@irs.gov were the ones who pointed out that my problem was with the signing
+
 2015-06-26
 * refactored ENT_COD to Compte and accountsTotalUsd to posCur
 * had forgotten to include currency .. fixed
