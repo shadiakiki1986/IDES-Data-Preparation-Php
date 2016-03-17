@@ -1,3 +1,9 @@
+2016-03-17
+* converted scripts in tests to phpunit tests
+ * these should be factored out to test the code in the Receiver and Transmitter classes instead of a copy of the code in the tests
+* added some variable checking for the config
+* minor documentation improvements
+
 2015-07-02
 * after a long struggle to understand why our submission was yielding a security threat alert, I learned that the way I was signing the XML file was wrong.
 * Correcting it resulted in a successful submission
