@@ -9,15 +9,13 @@
 define("ROOT_IDES_DATA", dirname(__FILE__));// from https://github.com/shadiakiki1986/IDES-Data-Preparation-Php
 
 # more required files
-define('FatcaXsd',"path/to/FATCA XML Schema v1.1/FatcaXML_v1.1.xsd"); // from http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-and-Business-Rules-for-Form-8966
 define('FatcaCrt',"path/to/ssl_certificate.crt");// FFA certificate bought using the private key
 define('FatcaKeyPrivate',"path/to/ffa-fatca-private.pem"); // FFA Private key used to get the FFA SSL certificate
 define('FatcaKeyPublic',"path/to/ffa-fatca-public.pem"); // FFA public key extracted out of private key above
 
-// IRS public key from https://ides-support.com/Downloads/encryption-service_services_irs_gov.crt
-define('FatcaIrsPublic','path/to/encryption-service_services_irs_gov.crt'); 
-
-# Metadata stylesheeet: already downloaded in `INSTALL.md` if instructions were followed
+# some files already downloaded in `INSTALL.md` if instructions were followed
+define('FatcaIrsPublic',ROOT_IDES_DATA.'/downloads/encryption-service_services_irs_gov.crt');
+define('FatcaXsd',ROOT_IDES_DATA."/downloads/FATCA XML Schema v1.1/FatcaXML_v1.1.xsd");
 define('MetadataXsd',ROOT_IDES_DATA.'/downloads/SenderMetadatav11/FATCA IDES SENDER FILE METADATA XML LIBRARY/FATCA-IDES-SenderFileMetadata-1.1.xsd');
 
 # Fatca GIIN's

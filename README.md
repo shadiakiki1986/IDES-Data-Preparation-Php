@@ -14,10 +14,6 @@ The code itself is far from perfect. Constructive feedback is welcome.
 
 # Pre-requisites
 * a function lib/getFatcaData.php that returns client data to be submitted for FATCA
-
-Download Fatca XML schema file
-* from http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-and-Business-Rules-for-Form-8966
-
 * SSL certificate for your financial institution
 * Private and public keys used to get the SSL certificate
 * IRS public key from https://ides-support.com/Downloads/encryption-service_services_irs_gov.crt
@@ -33,14 +29,19 @@ Run
     [sudo] php5enmod mcrypt
     [sudo] service apache2 restart
 
-Download the Sender metadata stylesheet file
-* link available at: https://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-and-Business-Rules-for-Form-8966
-* under "Sender Metadata XML v1.1"
+Download Fatca XML schema file, Sender metadata stylesheet, and IRS public key
+* links available at http://www.irs.gov/Businesses/Corporations/FATCA-XML-Schemas-and-Business-Rules-for-Form-8966
 
-    wget https://www.irs.gov/pub/fatca/SenderMetadatav1.1.zip -O downloads/
     cd downloads
+    wget https://www.irs.gov/pub/fatca/FATCAXMLSchemav1.zip
+    unzip FATCAXMLSchemav1.zip
+    rm FATCAXMLSchemav1.zip
+
+    wget https://www.irs.gov/pub/fatca/SenderMetadatav1.1.zip
     unzip SenderMetadatav1.1.zip 
     rm SenderMetadatav1.1.zip 
+
+    wget https://ides-support.com/Downloads/encryption-service_services_irs_gov.crt
 
 * Download the remaining files indicated above in the Pre-Requisites section
 * Copy the file in config-sample.php in the root folder to config.php
