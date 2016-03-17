@@ -5,6 +5,7 @@ require_once ROOT_IDES_DATA.'/vendor/autoload.php'; #  if this line throw an err
 require_once ROOT_IDES_DATA.'/lib/GuidManager.php';
 require_once ROOT_IDES_DATA.'/lib/AesManager.php';
 require_once ROOT_IDES_DATA.'/lib/SigningManager.php';
+require_once 'checkConfig.php';
 
 class Transmitter {
 
@@ -34,6 +35,7 @@ class Transmitter {
 	// isTest: true|false whether the data is test data. This will only help set the DocTypeIndic field in the XML file
 	// corrDocRefId: false|message ID. If this is a correction of a previous message, pass the message ID in subject, otherwise just pass false
 
+    checkConfig();
 		$this->data=$dd;
 		$this->corrDocRefId=$corrDocRefId;
 		$this->docType=sprintf("FATCA%s%s",$isTest?"1":"",$corrDocRefId?"2":"1");
@@ -229,8 +231,10 @@ class Transmitter {
 		default: throw new Exception("Invalid xml file to validate");
 		}
 
-		$xmlDom=DOMDocument::loadXML($xml);
-		return $xmlDom->schemaValidate($xsd);
+    $doc = new DOMDocument();
+		$xmlDom=$doc->loadXML($xml);
+    if(!$xmlDom) throw new Exception(sprintf("Invalid XML: %s",$xml));
+		return $doc->schemaValidate($xsd);
 	}
 
 
@@ -300,7 +304,7 @@ class Transmitter {
 		*/
 		$md='<FATCAIDESSenderFileMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:fatca:idessenderfilemetadata">
 			<FATCAEntitySenderId>'.ffaid.'</FATCAEntitySenderId>
-			<FATCAEntityReceiverId>000000.00000.TA.840</FATCAEntityReceiverId>
+			<FATCAEntityReceiverId>'.ffaidReceiver.'</FATCAEntityReceiverId>
 			<FATCAEntCommunicationTypeCd>RPT</FATCAEntCommunicationTypeCd>
 			<SenderFileId>'.rand(1,9999999).'</SenderFileId>
 			<FileCreateTs>'.$this->ts2.'</FileCreateTs>

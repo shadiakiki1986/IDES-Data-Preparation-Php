@@ -1,5 +1,7 @@
 <?php
 
+require_once 'checkConfig.php';
+
 class Receiver {
 
 var $data; // php data with fatca information
@@ -21,13 +23,17 @@ var $from;
 var $to;
 
 function __construct($tf4=false) {
+  checkConfig();
+  
 	if(!$tf4) {
 		$tf4=sys_get_temp_dir();
 		$temp_file = tempnam(sys_get_temp_dir(), 'Tux');
 		unlink($temp_file);
 		mkdir($temp_file);
 		$tf4=$temp_file;
-	}
+	} else {
+    if(!file_exists($tf4)) throw new Exception(sprintf("Passed folder inexistant: '%s'",$tf4));
+  }
 
 	$this->tf1=tempnam("/tmp","");
 	$this->tf2=tempnam("/tmp","");
@@ -44,7 +50,7 @@ function fromZip($filename) {
 	    $zip->extractTo($this->tf4);
 	    $zip->close();
 	} else {
-	    throw new Exception('failed to open archive');
+	    throw new Exception(sprintf("failed to open archive: '%s'",$filename));
 	}
 
 	$xx=scandir($this->tf4);
@@ -67,7 +73,7 @@ function fromZip($filename) {
 	}
 
 	function readFfaPrivateKey($returnResource=true) {
-	  $kk=($this->from=="000000.00000.TA.840"?FatcaKeyPrivate:("B7PPBF.00000.LE.422"?FatcaIrsPublic:die("WTF")));
+	  $kk=($this->from==ffaidReceiver?FatcaKeyPrivate:(ffaid?FatcaIrsPublic:die("WTF")));
 	  $fp=fopen($kk,"r");
 	  $priv_key_string=fread($fp,8192);
 	  fclose($fp);

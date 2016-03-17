@@ -4,16 +4,35 @@ require_once dirname(__FILE__).'/../config.php'; // copy the provided sample in 
 require_once ROOT_IDES_DATA.'/lib/libxml_helpers.php';
 require_once ROOT_IDES_DATA.'/lib/Receiver.php';
 
-$fn="/home/shadi/840FHqBTplZx26bXltl2LWoRab4RugMX.zip";
-$rx=new Receiver("/home/shadi/tempIdes");
-$rx->fromZip($fn);
-$rx->decryptAesKey();
-$rx->fromEncrypted();
-$rx->fromCompressed();
+class ReceiverTest extends PHPUnit_Framework_TestCase {
 
-echo "From: ".$rx->from."\n";
-echo "To: ".$rx->to."\n";
-//echo "Key: ".$rx->aeskey."\n";
-//echo "Payload encrypted: ".$rx->dataEncrypted."\n";
-//echo "Payload decrypted: ".$rx->dataCompressed."\n";
-echo "Payload uncompressed: ".$rx->dataXmlSigned."\n";
+  public function testDir() {
+    $rx1=new Receiver("/home/shadi/"); // should pass
+    try {
+      $rx2=new Receiver("/random/folder/inexistant/"); // should pass
+      $this->assertTrue(false); // shouldnt get here
+    } catch(Exception $e) {
+      $this->assertTrue(true); // should get here
+    }
+  }
+
+  public function testWorkflow() {
+    $fn="/home/shadi/840FHqBTplZx26bXltl2LWoRab4RugMX.zip";
+    if(!file_exists($fn)) {
+      $this->markTestSkipped("Zip file '%s' not available for testing",$fn);
+      return;
+    }
+    $rx=new Receiver();
+    $rx->fromZip($fn);
+    $rx->decryptAesKey();
+    $rx->fromEncrypted();
+    $rx->fromCompressed();
+
+    echo "From: ".$rx->from."\n";
+    echo "To: ".$rx->to."\n";
+    //echo "Key: ".$rx->aeskey."\n";
+    //echo "Payload encrypted: ".$rx->dataEncrypted."\n";
+    //echo "Payload decrypted: ".$rx->dataCompressed."\n";
+    echo "Payload uncompressed: ".$rx->dataXmlSigned."\n";
+  }
+}

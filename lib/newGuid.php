@@ -10,7 +10,10 @@ function newGuid() {
         substr($s,12,4). '-' . 
         substr($s,16,4). '-' . 
         substr($s,20); 
+    // the following str_replace might not be necessary, but it was one of the things that I changed when our submission passed
     $guidText=str_replace("-","",$guidText);
+
+    // done
     return $guidText;
 }
 // End Generate Guid 

@@ -2,11 +2,13 @@
 
 require_once dirname(__FILE__).'/../config.php';
 require_once ROOT_IDES_DATA.'/vendor/autoload.php'; #  if this line throw an error, I probably forgot to run composer install
+require_once 'checkConfig.php';
 
 class SigningManager {
 
 	function sign($dataIn) {
 	// using https://github.com/robrichards/xmlseclibs
+    checkConfig();
 
 		// Load the XML to be signed
 		$doc = new DOMDocument();

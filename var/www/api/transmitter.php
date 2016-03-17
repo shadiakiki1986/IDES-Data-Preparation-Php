@@ -26,6 +26,15 @@
 		 });
 */
 
+error_reporting(E_ALL);
+
+// http://stackoverflow.com/a/11206244/4126114
+set_error_handler("warning_handler", E_WARNING);
+function warning_handler($errno, $errstr) { 
+  print sprintf("<div style='color:red'>%s: %s</div>",$errno,$errstr);
+}
+
+
 require_once dirname(__FILE__).'/../../../config.php'; // copy the provided sample in repository/config-sample.php
 
 require_once ROOT_IDES_DATA.'/lib/libxml_helpers.php';
@@ -63,9 +72,10 @@ $fca=new Transmitter($di,$_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear']
 $fca->toXml(); # convert to xml 
 
 if(!$fca->validateXml("payload")) {# validate
-    print 'Payload xml did not pass its xsd validation';
-    libxml_display_errors();
-    exit;
+  print 'Payload xml did not pass its xsd validation';
+  libxml_display_errors();
+
+  if(in_array($_GET['format'],array("xml","zip"))) exit;
 }
 
 if(!$fca->validateXml("metadata")) {# validate
