@@ -88,28 +88,30 @@ class Transmitter {
 
 	function toHtml() {
 		$dv=array_values($this->data);
-		return sprintf("<table border=1>%s%s</table>",
-			implode(array_map(function($x) { return "<th>".$x."</th>"; },array_keys($dv[0]))),
-			implode(
-			array_map(function($y) {
-				return "<tr>".implode(array_map(function($x) {
-					if(!is_array($x)) {
-						return "<td>".$x."</td>";
-					} else {
-						return sprintf("<td><ul>%s</ul></td>",
-							implode("",
-								array_map(function($z) {
-									return sprintf("<li>%s %s%s</li>",
-										$z["posCur"],
-										$z["cur"],
-										($z["CLI_CLOSED_DATE"]?sprintf(" (%s)",$z["CLI_CLOSED_DATE"]):"")
-									);
-								},$x)
-							)
-						);
-					}
-				},$y))."</tr>"; },$this->data)
-			));
+    $headers=array("ENT_LASTNAME","ENT_FIRSTNAME","ENT_FATCA_ID","ENT_ADDRESS","ResidenceCountry","ENT_COD","posCur","Compte","cur","dvdUsd");
+
+    // assert that there no keys more than those defined above
+    array_map(function($x) use($headers) {
+      assert(count(array_diff(array_keys($x),$headers))==0);
+    }, $this->data);
+
+	  $th=implode(array_map(function($x) { return "<th>".$x."</th>"; },$headers));
+    $body=array();
+    foreach($this->data as $y) {
+      $row=array();
+      foreach($y as $x) {
+        if(!is_array($x)) {
+          array_push($row, "<td>".$x."</td>");
+        } else {
+          die("arrays here No longer supported");
+        }
+      }
+      $row=implode($row);
+      array_push($body, "<tr>".$row."</tr>");
+    }
+    $body=implode($body);
+
+		return sprintf("<table border=1>%s%s</table>",$th,$body);
 	}
 
 	function toXml($utf8=false) {

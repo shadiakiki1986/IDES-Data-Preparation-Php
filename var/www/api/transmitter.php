@@ -11,11 +11,11 @@
             http://www.irs.gov/file_source/pub/fatca/FATCAXMLSchemav1.zip
  Usage:
  	CLI
- 		php getFatcaClients.php [format=html(default)|xml|zip] [shuffle=true(default)|false]
+ 		php transmitter.php [format=html(default)|xml|zip] [shuffle=true(default)|false]
 
- 	Ajax
+ 	Ajax with jquery
 		$.ajax({
-		    url:"http://{{server}}/IDES-Data-Preparation-Php/getFatcaClients.php",
+		    url:"http://{{server}}/IDES-Data-Preparation-Php/transmitter.php?format=html&shuffle=true",
 		    type: 'GET',
 		    success: function (data) {
 		        console.log(data);
@@ -52,6 +52,34 @@ if(!file_exists(ROOT_IDES_DATA.'/lib/getFatcaData.php')) {
 if(defined(ZipBackupFolder)) if(!file_exists(ZipBackupFolder) || !is_dir(ZipBackupFolder)) throw new Exception("Defined ZipBackupFolder does not exist or is not a folder");
 
 // 
+if(isset($argc)) {
+  $_GET=array();
+  $options = getopt("hf::sy:", array("help","format::","shuffle","year:"));
+  foreach($options as $k=>$v) {
+    switch($k) {
+      case "h":
+      case "help":
+        echo "Usage: php ".basename(__FILE__)." --year=2014 [--format=html*|xml|zip] [--shuffle]\n";
+        echo "       php ".basename(__FILE__)." --help\n";
+        exit;
+        break;
+      case "f":
+      case "format":
+        $_GET["format"]=$v;
+        break;
+      case "s":
+      case "shuffle":
+        $_GET["shuffle"]="true";
+        break;
+      case "y":
+      case "year":
+        $_GET["taxYear"]=$v;
+        break;
+    }
+  }
+  if(!array_key_exists("taxYear",$_GET)) die("Please pass year=...\n");
+}
+
 if(!array_key_exists("format",$_GET)) $_GET['format']="html"; # default
 if(!in_array($_GET['format'],array("html","xml","zip","metadata"))) throw new Exception("Unsupported format. Please use one of: html, xml, zip, metadata");
 
