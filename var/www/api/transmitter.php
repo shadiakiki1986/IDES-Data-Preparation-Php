@@ -11,7 +11,7 @@
             http://www.irs.gov/file_source/pub/fatca/FATCAXMLSchemav1.zip
  Usage:
  	CLI
- 		php transmitter.php [format=html(default)|xml|zip] [shuffle=true(default)|false]
+ 		php transmitter.php --help
 
  	Ajax with jquery
 		$.ajax({
@@ -54,12 +54,12 @@ if(defined(ZipBackupFolder)) if(!file_exists(ZipBackupFolder) || !is_dir(ZipBack
 // 
 if(isset($argc)) {
   $_GET=array();
-  $options = getopt("hf::sy:", array("help","format::","shuffle","year:"));
+  $options = getopt("hf::sy:", array("help","format::","shuffleSkip","year:"));
   foreach($options as $k=>$v) {
     switch($k) {
       case "h":
       case "help":
-        echo "Usage: php ".basename(__FILE__)." --year=2014 [--format=html*|xml|zip] [--shuffle]\n";
+        echo "Usage: php ".basename(__FILE__)." --year=2014 [--format=html*|xml|zip] [--shuffleSkip]\n";
         echo "       php ".basename(__FILE__)." --help\n";
         exit;
         break;
@@ -68,8 +68,8 @@ if(isset($argc)) {
         $_GET["format"]=$v;
         break;
       case "s":
-      case "shuffle":
-        $_GET["shuffle"]="true";
+      case "shuffleSkip":
+        $_GET["shuffle"]="false";
         break;
       case "y":
       case "year":

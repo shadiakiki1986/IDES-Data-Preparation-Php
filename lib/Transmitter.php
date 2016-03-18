@@ -88,7 +88,7 @@ class Transmitter {
 
 	function toHtml() {
 		$dv=array_values($this->data);
-    $headers=array("ENT_LASTNAME","ENT_FIRSTNAME","ENT_FATCA_ID","ENT_ADDRESS","ResidenceCountry","ENT_COD","posCur","Compte","cur","dvdUsd");
+    $headers=array("ENT_LASTNAME","ENT_FIRSTNAME","ENT_FATCA_ID","ENT_ADDRESS","ResidenceCountry","ENT_COD","posCur","Compte","cur","dvdCur");
 
     // assert that there no keys more than those defined above
     array_map(function($x) use($headers) {
@@ -111,7 +111,15 @@ class Transmitter {
     }
     $body=implode($body);
 
-		return sprintf("<table border=1>%s%s</table>",$th,$body);
+		$html2 = sprintf("<table border=1>%s%s</table>\n",$th,$body);
+
+    // pretty print html
+    $doc = new DOMDocument();
+    $doc->preserveWhiteSpace = true;
+    $doc->formatOutput = true;//false;
+    $doc->loadHTML($html2);
+    $html3=$doc->saveHTML();
+    return $html3;
 	}
 
 	function toXml($utf8=false) {
@@ -183,6 +191,7 @@ class Transmitter {
 			    </ftc:Individual>
 			    </ftc:AccountHolder>
 			    <ftc:AccountBalance currCode='%s'>%s</ftc:AccountBalance>
+          %s
 			    </ftc:AccountReport>
 			",
 			$docType, // check the xsd
@@ -195,7 +204,8 @@ class Transmitter {
 			$x['ResidenceCountry'],
 			$x['ENT_ADDRESS'],
 			$x['cur'],
-			$x['posCur']
+			$x['posCur'],
+      array_key_exists('dvdCur',$x)?sprintf("<ftc:Payment><ftc:Type>FATCA501</ftc:Type><ftc:PaymentAmnt currCode='%s'>%s</ftc:PaymentAmnt></ftc:Payment>",$x['cur'],floor($x['dvdCur'])):""
 			); },
 		    $di
 		),"\n")
