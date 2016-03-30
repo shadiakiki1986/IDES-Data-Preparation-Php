@@ -7,9 +7,11 @@ require_once ROOT_IDES_DATA.'/lib/Receiver.php';
 class ReceiverTest extends PHPUnit_Framework_TestCase {
 
   public function testDir() {
-    $rx1=new Receiver("/home/shadi/"); // should pass
+    // http://stackoverflow.com/a/21473475/4126114
+    $user = posix_getpwuid(posix_getuid());
+    $rx1=new Receiver($user['dir']); // should pass since the user home directory is existant
     try {
-      $rx2=new Receiver("/random/folder/inexistant/"); // should pass
+      $rx2=new Receiver("/random/folder/inexistant/"); // should not pass since the directory is inexistant
       $this->assertTrue(false); // shouldnt get here
     } catch(Exception $e) {
       $this->assertTrue(true); // should get here

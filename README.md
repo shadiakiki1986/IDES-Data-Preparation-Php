@@ -16,7 +16,6 @@ The code itself is far from perfect. Constructive feedback is welcome.
 * a function lib/getFatcaData.php that returns client data to be submitted for FATCA
 * SSL certificate for your financial institution
 * Private and public keys used to get the SSL certificate
-* IRS public key from https://ides-support.com/Downloads/encryption-service_services_irs_gov.crt
 * php5, apache2, ...
 
 # Installation instructions
@@ -54,4 +53,6 @@ Download Fatca XML schema file, Sender metadata stylesheet, and IRS public key
  * Refer to standard apache2 guides on publishing websites
 * Navigate in your browser to http://your-server/IDES-Data-Preparation-Php and get your data in html, xml, or zip format
 * create the folder defined in config.php under ZipBackupFolder
- * and don''t forget to chwon www-data:www-data
+ * and don''t forget to chown www-data:www-data
+* can also use `var/www/api/transmitter.php` from CLI
+ * run `php var/www/api/transmitter.php --help` for options

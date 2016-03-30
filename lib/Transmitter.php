@@ -258,7 +258,8 @@ class Transmitter {
 
 	function verifyXmlSigned() {
 		$sm=new SigningManager();
-		return $sm->verify($this->dataXmlSigned);
+    $vx=$sm->verify($this->dataXmlSigned);
+		return $vx==1;
 	}
 
 	function toCompressed() {

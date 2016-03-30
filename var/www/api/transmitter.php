@@ -28,12 +28,13 @@
 
 error_reporting(E_ALL);
 
-// http://stackoverflow.com/a/11206244/4126114
-set_error_handler("warning_handler", E_WARNING);
-function warning_handler($errno, $errstr) { 
-  print sprintf("<div style='color:red'>%s: %s</div>",$errno,$errstr);
+if(!isset($argc)) {
+  // http://stackoverflow.com/a/11206244/4126114
+  set_error_handler("warning_handler", E_WARNING);
+  function warning_handler($errno, $errstr) { 
+    print sprintf("<div style='color:red'>%s: %s</div>",$errno,$errstr);
+  }
 }
-
 
 require_once dirname(__FILE__).'/../../../config.php'; // copy the provided sample in repository/config-sample.php
 
@@ -156,12 +157,15 @@ if(!array_key_exists("emailTo",$_GET)) {
   file_put_contents($fnM,$fca->getMetadata());
   $fnZ = $fca->tf4;
 
-  if(!mail_attachment($fn,
+  $subj=sprintf("IDES data: %s",date("Y-m-d H:i:s"));
+
+  if(!mail_attachment(
+    array($fnH,$fnX,$fnM,$fnZ),
     $_GET["emailTo"],
     "s.akiki@ffaprivatebank.com", // from email
     "Shadi Akiki", // from name
     "s.akiki@ffaprivatebank.com", // reply to
-    sprintf("IDES data: %s",date("Y-m-d H:i:s")), 
+    $subj, 
     "Attached: html, xml, metadata, zip formats"
   )) throw new Exception("Failed to send email");
 

@@ -33,15 +33,7 @@ class SignedWhiteSpaceTest extends PHPUnit_Framework_TestCase {
     }
     $this->assertTrue($fca->validateXml("metadata")); 
 
-    $diXml1=$fca->toXmlSigned(true);
+    $diXml=$fca->toXmlSigned();
     $this->assertTrue($fca->verifyXmlSigned()); # else print 'preservewhitespace=true => signature not verified'.PHP_EOL;
-
-    $diXml2=$fca->toXmlSigned(false);
-    $this->assertTrue($fca->verifyXmlSigned()); # else print 'preservewhitespace=false => signature not verified'.PHP_EOL;
-
-    $this->assertTrue($diXml1==$diXml2); // else print 'whitespace changed'.PHP_EOL;
-
-    #file_put_contents("/home/shadi/Development/f1.xml",$diXml1);
-    #file_put_contents("/home/shadi/Development/f2.xml",$diXml2);
   }
 }
