@@ -1,6 +1,7 @@
 2016
 * in var/www/api/transmitter.php I have a format=metadata but I don''t document it in the file header
 * move files from "var/www" to "www" directly
+* renaming the files for emailing is skipping the xmls?
 
 2015
 * test FATCA12, 13, 14, as http://www.irs.gov/pub/irs-pdf/p5124.pdf
