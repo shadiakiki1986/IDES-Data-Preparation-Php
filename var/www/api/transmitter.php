@@ -40,6 +40,7 @@ require_once dirname(__FILE__).'/../../../config.php'; // copy the provided samp
 require_once ROOT_IDES_DATA.'/lib/libxml_helpers.php';
 require_once ROOT_IDES_DATA.'/lib/Transmitter.php';
 require_once ROOT_IDES_DATA.'/lib/array2shuffledLetters.php';
+require_once ROOT_IDES_DATA.'/lib/mail_attachment.php';
 
 // if installation instructions were not followed by copying the file getFatcaData-SAMPLE to getFatcaData, then just use the sample file
 if(!file_exists(ROOT_IDES_DATA.'/lib/getFatcaData.php')) {
@@ -54,12 +55,12 @@ if(defined(ZipBackupFolder)) if(!file_exists(ZipBackupFolder) || !is_dir(ZipBack
 // 
 if(isset($argc)) {
   $_GET=array();
-  $options = getopt("hf::sy:", array("help","format::","shuffleSkip","year:"));
+  $options = getopt("hf::sy:e:", array("help","format::","shuffleSkip","year:","emailTo:"));
   foreach($options as $k=>$v) {
     switch($k) {
       case "h":
       case "help":
-        echo "Usage: php ".basename(__FILE__)." --year=2014 [--format=html*|xml|zip] [--shuffleSkip]\n";
+        echo "Usage: php ".basename(__FILE__)." --year=2014 [--format=html*|xml|zip] [--shuffleSkip] [--emailTo=s.akiki@ffaprivatebank.com]\n";
         echo "       php ".basename(__FILE__)." --help\n";
         exit;
         break;
@@ -74,6 +75,10 @@ if(isset($argc)) {
       case "y":
       case "year":
         $_GET["taxYear"]=$v;
+        break;
+      case "e":
+      case "emailTo":
+        $_GET["emailTo"]=$v;
         break;
     }
   }
@@ -124,20 +129,41 @@ if(defined(ZipBackupFolder)) copy($fca->tf4, ZipBackupFolder."/includeUnencrypte
 $fca->toZip(false);
 if(defined(ZipBackupFolder)) copy($fca->tf4,ZipBackupFolder."/submitted_".$fca->file_name);
 
-switch($_GET['format']) {
-	case "html":
-		echo($fca->toHtml());
-		break;
-	case "xml":
-		Header('Content-type: text/xml');
-		echo($diXml2);
-		break;
-	case "zip":
-		$fca->getZip();
-		break;
-	case "metadata":
-		Header('Content-type: text/xml');
-		echo($fca->getMetadata());
-		break;
-	default: throw new Exception("Unsupported format ".$_GET['format']);
+if(!array_key_exists("emailTo",$_GET)) {
+  switch($_GET['format']) {
+    case "html":
+      echo($fca->toHtml());
+      break;
+    case "xml":
+      Header('Content-type: text/xml');
+      echo($diXml2);
+      break;
+    case "zip":
+      $fca->getZip();
+      break;
+    case "metadata":
+      Header('Content-type: text/xml');
+      echo($fca->getMetadata());
+      break;
+    default: throw new Exception("Unsupported format ".$_GET['format']);
+  }
+} else {
+  $fnH = tempnam("/tmp","");
+  file_put_contents($fnH,$fca->toHtml());
+  $fnX = tempnam("/tmp","");
+  file_put_contents($fnX,$diXml2);
+  $fnM = tempnam("/tmp","");
+  file_put_contents($fnM,$fca->getMetadata());
+  $fnZ = $fca->tf4;
+
+  if(!mail_attachment($fn,
+    $_GET["emailTo"],
+    "s.akiki@ffaprivatebank.com", // from email
+    "Shadi Akiki", // from name
+    "s.akiki@ffaprivatebank.com", // reply to
+    sprintf("IDES data: %s",date("Y-m-d H:i:s")), 
+    "Attached: html, xml, metadata, zip formats"
+  )) throw new Exception("Failed to send email");
+
+  echo "Done emailing\n";
 }
