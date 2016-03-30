@@ -149,11 +149,19 @@ if(!array_key_exists("emailTo",$_GET)) {
     default: throw new Exception("Unsupported format ".$_GET['format']);
   }
 } else {
-  $fnH = tempnam("/tmp","");
+
+  // http://stackoverflow.com/a/32772796/4126114
+  function myTempnam($suf) {
+    $fnH = tempnam("/tmp","");
+    rename($fnH, $fnH .= '.'.$suf);
+    return $fnH;
+  }
+
+  $fnH = myTempnam('html');
   file_put_contents($fnH,$fca->toHtml());
-  $fnX = tempnam("/tmp","");
+  $fnX = myTempnam('xml');
   file_put_contents($fnX,$diXml2);
-  $fnM = tempnam("/tmp","");
+  $fnM = myTempnam('xml');
   file_put_contents($fnM,$fca->getMetadata());
   $fnZ = $fca->tf4;
 
