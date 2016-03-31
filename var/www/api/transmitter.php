@@ -108,8 +108,9 @@ $fca->toXml(); # convert to xml
 if(!$fca->validateXml("payload")) {# validate
   print 'Payload xml did not pass its xsd validation';
   libxml_display_errors();
-
-  if(in_array($_GET['format'],array("xml","zip"))) exit;
+  $exitCond=in_array($_GET['format'],array("xml","zip"));
+  $exitCond=$exitCond||array_key_exists("emailTo",$_GET);
+  if($exitCond) exit;
 }
 
 if(!$fca->validateXml("metadata")) {# validate
