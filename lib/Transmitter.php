@@ -88,7 +88,7 @@ class Transmitter {
 
 	function toHtml() {
 		$dv=array_values($this->data);
-    $headers=array("ENT_LASTNAME","ENT_FIRSTNAME","ENT_FATCA_ID","ENT_ADDRESS","ResidenceCountry","ENT_COD","posCur","Compte","cur","dvdCur");
+    $headers=array("ENT_LASTNAME","ENT_FIRSTNAME","ENT_FATCA_ID","ENT_ADDRESS","ResidenceCountry","ENT_COD","posCur","Compte","cur","dvdCur","intCur");
 
     // assert that there no keys more than those defined above
     array_map(function($x) use($headers) {
@@ -99,11 +99,16 @@ class Transmitter {
     $body=array();
     foreach($this->data as $y) {
       $row=array();
-      foreach($y as $x) {
-        if(!is_array($x)) {
-          array_push($row, "<td>".$x."</td>");
+      foreach($headers as $x1) {
+        if(array_key_exists($x1,$y)) {
+          $x2=$y[$x1];
+          if(!is_array($x2)) {
+            array_push($row, "<td>".$x2."</td>");
+          } else {
+            die("arrays here No longer supported");
+          }
         } else {
-          die("arrays here No longer supported");
+          array_push($row,"<td>&nbsp;</td>");
         }
       }
       $row=implode($row);
@@ -192,6 +197,7 @@ class Transmitter {
 			    </ftc:AccountHolder>
 			    <ftc:AccountBalance currCode='%s'>%s</ftc:AccountBalance>
           %s
+          %s
 			    </ftc:AccountReport>
 			",
 			$docType, // check the xsd
@@ -205,7 +211,8 @@ class Transmitter {
 			$x['ENT_ADDRESS'],
 			$x['cur'],
 			$x['posCur'],
-      array_key_exists('dvdCur',$x)?sprintf("<ftc:Payment><ftc:Type>FATCA501</ftc:Type><ftc:PaymentAmnt currCode='%s'>%s</ftc:PaymentAmnt></ftc:Payment>",$x['cur'],floor($x['dvdCur'])):""
+      array_key_exists('dvdCur',$x)?sprintf("<ftc:Payment><ftc:Type>FATCA501</ftc:Type><ftc:PaymentAmnt currCode='%s'>%s</ftc:PaymentAmnt></ftc:Payment>",$x['cur'],floor($x['dvdCur'])):"",
+      array_key_exists('intCur',$x)?sprintf("<ftc:Payment><ftc:Type>FATCA502</ftc:Type><ftc:PaymentAmnt currCode='%s'>%s</ftc:PaymentAmnt></ftc:Payment>",$x['cur'],floor($x['intCur'])):""
 			); },
 		    $di
 		),"\n")
