@@ -30,7 +30,7 @@ function mail_attachment($files, $mailto, $from_mail, $from_name, $replyto, $sub
       $content = chunk_split(base64_encode($content));
 
       $msg .= "--".$uid.PHP_EOL;
-      $msg .= "Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; name=\"".basename($filename)."\"".PHP_EOL; // use different content types here
+      $msg .= "Content-Type: ".mime_content_type($filename)."; name=\"".basename($filename)."\"".PHP_EOL; // use different content types here, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
       $msg .= "Content-Transfer-Encoding: base64".PHP_EOL;
       $msg .= "Content-Disposition: attachment; filename=\"".basename($filename)."\"".PHP_EOL.PHP_EOL;
       $msg .= $content.PHP_EOL.PHP_EOL;

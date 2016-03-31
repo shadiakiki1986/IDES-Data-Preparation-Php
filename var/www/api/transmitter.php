@@ -83,7 +83,7 @@ if(isset($argc)) {
         break;
     }
   }
-  if(!array_key_exists("taxYear",$_GET)) die("Please pass year=...\n");
+  if(!array_key_exists("taxYear",$_GET)) die("Please pass --year=2014 for example\n");
 }
 
 if(!array_key_exists("format",$_GET)) $_GET['format']="html"; # default
@@ -157,18 +157,32 @@ if(!array_key_exists("emailTo",$_GET)) {
     return $fnH;
   }
 
+  // save to files
   $fnH = myTempnam('html');
   file_put_contents($fnH,$fca->toHtml());
   $fnX = myTempnam('xml');
   file_put_contents($fnX,$diXml2);
   $fnM = myTempnam('xml');
   file_put_contents($fnM,$fca->getMetadata());
-  $fnZ = $fca->tf4;
+  $fnZ = myTempnam('zip');
+  copy($fca->tf4,$fnZ);
 
+  // zip to avoid getting blocked on server
+  $z = new ZipArchive();
+  $fnZ2 = myTempnam('zip');
+  $z->open($fnZ2, ZIPARCHIVE::CREATE);
+  $z->addEmptyDir("IDES data");
+  $z->addFile($fnH, "IDES data/data.html");
+  $z->addFile($fnX, "IDES data/data.xml");
+  $z->addFile($fnM, "IDES data/metadata.xml");
+  $z->addFile($fnZ, "IDES data/data.zip");
+  $z->close(); 
+
+  // send email
   $subj=sprintf("IDES data: %s",date("Y-m-d H:i:s"));
 
   if(!mail_attachment(
-    array($fnH,$fnX,$fnM,$fnZ),
+    array($fnZ2),
     $_GET["emailTo"],
     "s.akiki@ffaprivatebank.com", // from email
     "Shadi Akiki", // from name
