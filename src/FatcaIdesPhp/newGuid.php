@@ -1,4 +1,6 @@
 <?php
+namespace FatcaIdesPhp;
+
 // http://phpgoogle.blogspot.com/2007/08/four-ways-to-generate-unique-id-by-php.html
 // Generate Guid 
 function newGuid() { 

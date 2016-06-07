@@ -1,5 +1,7 @@
 <?php
 
+namespace FatcaIdesPhp;
+
 function array2shuffledLetters($di,$exceptFields=array()) {
 # di: 2D array
 # exceptFields: array of strings of field names that should not be shuffled

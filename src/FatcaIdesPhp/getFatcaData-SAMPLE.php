@@ -1,4 +1,7 @@
 <?php
+
+namespace FatcaIdesPhp;
+
 function getFatcaData($taxYear=2014) {
 // year: year for which taxes are being submitted
 	return array(

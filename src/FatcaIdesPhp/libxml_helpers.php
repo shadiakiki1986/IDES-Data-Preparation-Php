@@ -1,5 +1,7 @@
 <?php
 
+namespace FatcaIdesPhp;
+
 function libxml_display_error($error)
 {
     $return = "<br/>\n";

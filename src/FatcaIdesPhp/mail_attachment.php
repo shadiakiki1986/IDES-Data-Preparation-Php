@@ -1,4 +1,7 @@
 <?php
+
+namespace FatcaIdesPhp;
+
 // From http://stackoverflow.com/a/13459244
 
 function mail_attachment($files, $mailto, $from_mail, $from_name, $replyto, $subject, $message) {

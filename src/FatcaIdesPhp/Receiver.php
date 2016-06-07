@@ -1,6 +1,6 @@
 <?php
 
-require_once 'checkConfig.php';
+namespace FatcaIdesPhp;
 
 class Receiver {
 
@@ -23,7 +23,7 @@ var $from;
 var $to;
 
 function __construct($tf4=false) {
-  checkConfig();
+  Utils::checkConfig();
   
 	if(!$tf4) {
 		$tf4=sys_get_temp_dir();

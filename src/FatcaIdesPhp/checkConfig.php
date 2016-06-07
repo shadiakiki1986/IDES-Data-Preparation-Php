@@ -1,5 +1,7 @@
 <?php
 
+namespace FatcaIdesPhp;
+
 require_once dirname(__FILE__).'/../config.php';
 
 function checkConfig() {

@@ -1,5 +1,7 @@
 <?php
 
+namespace FatcaIdesPhp;
+
 class AesManager {
 
 	var $aeskey;
