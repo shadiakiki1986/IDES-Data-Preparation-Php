@@ -1,5 +1,7 @@
 <?php
 
+namespace FatcaIdesPhp;
+
 class TimestampTest extends PHPUnit_Framework_TestCase {
 
   public function test() {

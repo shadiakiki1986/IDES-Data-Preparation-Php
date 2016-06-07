@@ -3,11 +3,6 @@
 namespace FatcaIdesPhp;
 
 require_once dirname(__FILE__).'/../config.php';
-require_once ROOT_IDES_DATA.'/vendor/autoload.php'; #  if this line throw an error, I probably forgot to run composer install
-require_once ROOT_IDES_DATA.'/lib/GuidManager.php';
-require_once ROOT_IDES_DATA.'/lib/AesManager.php';
-require_once ROOT_IDES_DATA.'/lib/SigningManager.php';
-require_once 'checkConfig.php';
 
 class Transmitter {
 
@@ -37,7 +32,7 @@ class Transmitter {
 	// isTest: true|false whether the data is test data. This will only help set the DocTypeIndic field in the XML file
 	// corrDocRefId: false|message ID. If this is a correction of a previous message, pass the message ID in subject, otherwise just pass false
 
-    checkConfig();
+    Utils::checkConfig();
 		$this->data=$dd;
 		$this->corrDocRefId=$corrDocRefId;
 		$this->docType=sprintf("FATCA%s%s",$isTest?"1":"",$corrDocRefId?"2":"1");
@@ -378,4 +373,75 @@ class Transmitter {
 		readfile($yourfile);
 	}
 
+  public static function toEmail($fca,$emailTo,$emailFrom,$emailName,$emailReply) {
+    // save to files
+    $fnH = Utils::myTempnam('html');
+    file_put_contents($fnH,$fca->toHtml());
+    $fnX = Utils::myTempnam('xml');
+    file_put_contents($fnX,$diXml2);
+    $fnM = Utils::myTempnam('xml');
+    file_put_contents($fnM,$fca->getMetadata());
+    $fnZ = Utils::myTempnam('zip');
+    copy($fca->tf4,$fnZ);
+
+    // zip to avoid getting blocked on server
+    $z = new ZipArchive();
+    $fnZ2 = Utils::myTempnam('zip');
+    $z->open($fnZ2, ZIPARCHIVE::CREATE);
+    $z->addEmptyDir("IDES data");
+    $z->addFile($fnH, "IDES data/data.html");
+    $z->addFile($fnX, "IDES data/data.xml");
+    $z->addFile($fnM, "IDES data/metadata.xml");
+    $z->addFile($fnZ, "IDES data/data.zip");
+    $z->close(); 
+
+    // send email
+    $subj=sprintf("IDES data: %s",date("Y-m-d H:i:s"));
+
+    if(!Utils::mail_attachment(
+      array($fnZ2),
+      $emailTo,
+      $emailFrom, // from email
+      $emailName, // from name
+      $emailReply, // reply to
+      $subj, 
+      "Attached: html, xml, metadata, zip formats"
+    )) throw new Exception("Failed to send email");
+  }
+
+  public static function shortcut($di,$shuffle,$corrDocRefId,$taxYear,$format) {
+    if(count($di)==0) throw new Exception("No data");
+    if($shuffle) $di=Utils::array2shuffledLetters($di,array("ResidenceCountry","posCur","cur")); // shuffle all fields except these... ,"Compte"
+
+    $fca=new Transmitter($di,$shuffle,$corrDocRefId,$taxYear,$zipBkp=null);
+    $fca->toXml(); # convert to xml 
+
+    if(!$fca->validateXml("payload")) {# validate
+      print 'Payload xml did not pass its xsd validation';
+      Utils::libxml_display_errors();
+      $exitCond=in_array($_GET['format'],array("xml","zip"));
+      $exitCond=$exitCond||array_key_exists("emailTo",$_GET);
+      if($exitCond) exit;
+    }
+
+    if(!$fca->validateXml("metadata")) {# validate
+        print 'Metadata xml did not pass its xsd validation';
+        Utils::libxml_display_errors();
+        exit;
+    }
+
+    $diXml2=$fca->toXmlSigned();
+    if(!$fca->verifyXmlSigned()) die("Verification of signature failed");
+
+    $fca->toCompressed();
+    $fca->toEncrypted();
+    $fca->encryptAesKeyFile();
+    //	if(!$fca->verifyAesKeyFileEncrypted()) die("Verification of aes key encryption failed");
+    $fca->toZip(true);
+    if($zipBkp) copy($fca->tf4, $zipBkp."/includeUnencrypted_".$fca->file_name);
+    $fca->toZip(false);
+    if($zipBkp) copy($fca->tf4,$zipBkp."/submitted_".$fca->file_name);
+
+    return array("fca"=>$fca,"diXml2"=>$diXml2);
+  }
 } // end class

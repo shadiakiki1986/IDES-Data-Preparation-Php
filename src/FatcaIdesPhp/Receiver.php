@@ -110,5 +110,13 @@ function fromZip($filename) {
 		}
 	}
 
+  public static function shortcut($zipFn) {
+    $rx=new Receiver();
+    $rx->fromZip($zipFn);
+    $rx->decryptAesKey();
+    $rx->fromEncrypted();
+    $rx->fromCompressed();
+    return $rx;
+  }
 
 } // end class

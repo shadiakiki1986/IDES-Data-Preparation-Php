@@ -1,5 +1,7 @@
 <?php
 
+namespace FatcaIdesPhp;
+
 class Sha256Test extends PHPUnit_Framework_TestCase {
 
   public function test() {

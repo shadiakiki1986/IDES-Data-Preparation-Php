@@ -1,5 +1,7 @@
 <?php
 
+namespace FatcaIdesPhp;
+
 class EncryptionIvTest extends PHPUnit_Framework_TestCase {
 
   public function test() {

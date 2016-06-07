@@ -37,11 +37,9 @@ if(!isset($argc)) {
 }
 
 require_once dirname(__FILE__).'/../../../config.php'; // copy the provided sample in repository/config-sample.php
+require_once ROOT_IDES_DATA.'/vendor/autoload.php'; #  if this line throw an error, I probably forgot to run composer install
 
-require_once ROOT_IDES_DATA.'/lib/libxml_helpers.php';
-require_once ROOT_IDES_DATA.'/lib/Transmitter.php';
-require_once ROOT_IDES_DATA.'/lib/array2shuffledLetters.php';
-require_once ROOT_IDES_DATA.'/lib/mail_attachment.php';
+use FatcaIdesPhp\Transmitter;
 
 // if installation instructions were not followed by copying the file getFatcaData-SAMPLE to getFatcaData, then just use the sample file
 if(!file_exists(ROOT_IDES_DATA.'/lib/getFatcaData.php')) {
@@ -99,37 +97,9 @@ if(!array_key_exists("taxYear",$_GET)) $_GET['taxYear']=2014; else $_GET['taxYea
 
 // retrieval from mf db table
 $di=getFatcaData($_GET['taxYear']);
-if(count($di)==0) throw new Exception("No data");
-if($_GET['shuffle']) $di=array2shuffledLetters($di,array("ResidenceCountry","posCur","cur")); // shuffle all fields except these... ,"Compte"
-
-$fca=new Transmitter($di,$_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear']);
-$fca->toXml(); # convert to xml 
-
-if(!$fca->validateXml("payload")) {# validate
-  print 'Payload xml did not pass its xsd validation';
-  libxml_display_errors();
-  $exitCond=in_array($_GET['format'],array("xml","zip"));
-  $exitCond=$exitCond||array_key_exists("emailTo",$_GET);
-  if($exitCond) exit;
-}
-
-if(!$fca->validateXml("metadata")) {# validate
-    print 'Metadata xml did not pass its xsd validation';
-    libxml_display_errors();
-    exit;
-}
-
-$diXml2=$fca->toXmlSigned();
-if(!$fca->verifyXmlSigned()) die("Verification of signature failed");
-
-$fca->toCompressed();
-$fca->toEncrypted();
-$fca->encryptAesKeyFile();
-//	if(!$fca->verifyAesKeyFileEncrypted()) die("Verification of aes key encryption failed");
-$fca->toZip(true);
-if(defined(ZipBackupFolder)) copy($fca->tf4, ZipBackupFolder."/includeUnencrypted_".$fca->file_name);
-$fca->toZip(false);
-if(defined(ZipBackupFolder)) copy($fca->tf4,ZipBackupFolder."/submitted_".$fca->file_name);
+$tmtr=Transmitter::shortcut($di,$_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear'],$_GET['format'],defined(ZipBackupFolder)?ZipBackupFolder:null);
+$fca=$tmtr["fca"];
+$diXml2=$tmtr["diXml2"];
 
 if(!array_key_exists("emailTo",$_GET)) {
   switch($_GET['format']) {
@@ -150,47 +120,7 @@ if(!array_key_exists("emailTo",$_GET)) {
     default: throw new Exception("Unsupported format ".$_GET['format']);
   }
 } else {
-
-  // http://stackoverflow.com/a/32772796/4126114
-  function myTempnam($suf) {
-    $fnH = tempnam("/tmp","");
-    rename($fnH, $fnH .= '.'.$suf);
-    return $fnH;
-  }
-
-  // save to files
-  $fnH = myTempnam('html');
-  file_put_contents($fnH,$fca->toHtml());
-  $fnX = myTempnam('xml');
-  file_put_contents($fnX,$diXml2);
-  $fnM = myTempnam('xml');
-  file_put_contents($fnM,$fca->getMetadata());
-  $fnZ = myTempnam('zip');
-  copy($fca->tf4,$fnZ);
-
-  // zip to avoid getting blocked on server
-  $z = new ZipArchive();
-  $fnZ2 = myTempnam('zip');
-  $z->open($fnZ2, ZIPARCHIVE::CREATE);
-  $z->addEmptyDir("IDES data");
-  $z->addFile($fnH, "IDES data/data.html");
-  $z->addFile($fnX, "IDES data/data.xml");
-  $z->addFile($fnM, "IDES data/metadata.xml");
-  $z->addFile($fnZ, "IDES data/data.zip");
-  $z->close(); 
-
-  // send email
-  $subj=sprintf("IDES data: %s",date("Y-m-d H:i:s"));
-
-  if(!mail_attachment(
-    array($fnZ2),
-    $_GET["emailTo"],
-    "s.akiki@ffaprivatebank.com", // from email
-    "Shadi Akiki", // from name
-    "s.akiki@ffaprivatebank.com", // reply to
-    $subj, 
-    "Attached: html, xml, metadata, zip formats"
-  )) throw new Exception("Failed to send email");
+  Transmitter::toEmail($fca,$_GET["emailTo"],"s.akiki@ffaprivatebank.com","Shadi Akiki","s.akiki@ffaprivatebank.com");
 
   echo "Done emailing\n";
 }

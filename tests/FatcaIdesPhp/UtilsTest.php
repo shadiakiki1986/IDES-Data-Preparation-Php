@@ -1,7 +1,6 @@
 <?php
 
-require_once dirname(__FILE__).'/../config.php';
-require_once ROOT_IDES_DATA.'/lib/Utils.php';
+namespace FatcaIdesPhp;
 
 class UtilsTest extends PHPUnit_Framework_TestCase {
 

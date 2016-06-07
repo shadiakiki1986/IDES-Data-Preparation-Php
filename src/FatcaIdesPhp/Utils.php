@@ -124,6 +124,12 @@ class Utils {
   }
   // End Generate Guid 
 
-
+  
+  // http://stackoverflow.com/a/32772796/4126114
+  public static function myTempnam($suf) {
+    $fnH = tempnam("/tmp","");
+    rename($fnH, $fnH .= '.'.$suf);
+    return $fnH;
+  }
 
 } // end class
