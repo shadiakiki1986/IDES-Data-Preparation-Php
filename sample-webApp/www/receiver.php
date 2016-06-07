@@ -6,9 +6,9 @@ if (isset($_FILES['myFile'])) {
 	header( "Pragma: no-cache" );
 	header('Content-type: text/xml');
 
-	require_once dirname(__FILE__).'/../../../config.php'; // copy the provided sample in repository/config-sample.php
-
-	$rx=Receiver::shortcut($_FILES['myFile']['tmp_name']);
+  if(!defined("ROOT_IDES_DATA")) define("ROOT_IDES_DATA",__DIR__."/../..");
+  $config=yaml_parse_file(ROOT_IDES_DATA.'/config.yml');
+	$rx=Receiver::shortcut($config,$_FILES['myFile']['tmp_name']);
 
 	//	echo "<ol> Received zip:\n";
 	//	echo "<li>Name: ".$_FILES['myFile']['name']."</li>\n";

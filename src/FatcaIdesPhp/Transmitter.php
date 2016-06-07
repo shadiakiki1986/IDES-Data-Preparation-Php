@@ -27,16 +27,22 @@ class Transmitter {
 	var $taxYear;
 	var $guidManager;
 
-	function __construct($dd,$isTest,$corrDocRefId,$taxYear) {
+	function __construct($dd,$isTest,$corrDocRefId,$taxYear,$config) {
 	// dd: 2d array with fatca-relevant fields
 	// isTest: true|false whether the data is test data. This will only help set the DocTypeIndic field in the XML file
 	// corrDocRefId: false|message ID. If this is a correction of a previous message, pass the message ID in subject, otherwise just pass false
 
-    Utils::checkConfig();
+    $this->confiig=$config;
 		$this->data=$dd;
 		$this->corrDocRefId=$corrDocRefId;
-		$this->docType=sprintf("FATCA%s%s",$isTest?"1":"",$corrDocRefId?"2":"1");
+		$this->isTest=$isTest;
 		$this->taxYear=$taxYear;
+  }
+
+  function start() {
+
+    Utils::checkConfig($this->config);
+		$this->docType=sprintf("FATCA%s%s",$isTest?"1":"",$corrDocRefId?"2":"1");
 
 		// Sanity check
 		// docType: described in xsd for DocRefId
@@ -137,7 +143,7 @@ class Transmitter {
 		    xmlns:sfa='urn:oecd:ties:stffatcatypes:v1'
 		    xmlns:ftc='urn:oecd:ties:fatca:v1'>
 		    <ftc:MessageSpec>
-			<sfa:SendingCompanyIN>".ffaid."</sfa:SendingCompanyIN>
+			<sfa:SendingCompanyIN>".$this->config["ffaid"]."</sfa:SendingCompanyIN>
 			<sfa:TransmittingCountry>LB</sfa:TransmittingCountry>
 			<sfa:ReceivingCountry>US</sfa:ReceivingCountry>
 			<sfa:MessageType>FATCA</sfa:MessageType>
@@ -238,11 +244,11 @@ class Transmitter {
 		switch($whch) {
 		case "payload":
 			$xml=$this->dataXml;
-			$xsd=FatcaXsd;
+			$xsd=$this->config["FatcaXsd"];
 			break;
 		case "metadata":
 			$xml=$this->getMetadata();
-			$xsd=MetadataXsd;
+			$xsd=$this->config["MetadataXsd"];
 			break;
 		default: throw new Exception("Invalid xml file to validate");
 		}
@@ -274,7 +280,7 @@ class Transmitter {
 		    exit("cannot open <$filename>\n");
 		}
 
-		$zip->addFromString(ffaid."_Payload.xml", $this->dataXmlSigned);
+		$zip->addFromString($this->config["ffaid"]."_Payload.xml", $this->dataXmlSigned);
 		$zip->close();
 
 		$this->dataCompressed=file_get_contents($this->tf3);
@@ -287,7 +293,7 @@ class Transmitter {
 	}
 
 	function readIrsPublicKey($returnResource=true) {
-	  $fp=fopen(FatcaIrsPublic,"r");
+	  $fp=fopen($this->config["FatcaIrsPublic"],"r");
 	  $pub_key_string=fread($fp,8192);
 	  fclose($fp);
 	  if($returnResource) {
@@ -301,7 +307,9 @@ class Transmitter {
 
 	function encryptAesKeyFile() {
 		$this->aesEncrypted="";
-		if(!openssl_public_encrypt ( $this->aeskey , $this->aesEncrypted , $this->readIrsPublicKey() )) throw new Exception("Did not encrypt aes key");
+		if(!openssl_public_encrypt ( $this->aeskey , $this->aesEncrypted , $this->readIrsPublicKey() )) {
+      throw new Exception("Did not encrypt aes key");
+    }
 		if($this->aesEncrypted=="") throw new Exception("Failed to encrypt AES key");
 	}
 
@@ -313,15 +321,15 @@ class Transmitter {
 	}
 
 	function getMetadata() {
-		$this->file_name = strftime("%Y%m%d%H%M%S00%Z",$this->ts)."_".ffaid.".zip";
+		$this->file_name = strftime("%Y%m%d%H%M%S00%Z",$this->ts)."_".$this->config["ffaid"].".zip";
 
 		/*
 		// This is probably unnecessary
 		$md='<?xml version="1.0" encoding="utf-8"?>
 		*/
 		$md='<FATCAIDESSenderFileMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:fatca:idessenderfilemetadata">
-			<FATCAEntitySenderId>'.ffaid.'</FATCAEntitySenderId>
-			<FATCAEntityReceiverId>'.ffaidReceiver.'</FATCAEntityReceiverId>
+			<FATCAEntitySenderId>'.$this->config["ffaid"].'</FATCAEntitySenderId>
+			<FATCAEntityReceiverId>'.$this->config["ffaidReceiver"].'</FATCAEntityReceiverId>
 			<FATCAEntCommunicationTypeCd>RPT</FATCAEntCommunicationTypeCd>
 			<SenderFileId>'.rand(1,9999999).'</SenderFileId>
 			<FileCreateTs>'.$this->ts2.'</FileCreateTs>
@@ -349,12 +357,20 @@ class Transmitter {
 		    exit("cannot open <$filename>\n");
 		}
 
-		$zip->addFromString(ffaid."_Payload", $this->dataEncrypted);
-		$zip->addFromString(ffaidReceiver."_Key", $this->aesEncrypted);
-		$zip->addFromString(ffaid."_Metadata.xml", $this->getMetadata());
+		$zip->addFromString(
+      $this->config["ffaid"]."_Payload",
+      $this->dataEncrypted);
+		$zip->addFromString(
+      $this->config["ffaidReceiver"]."_Key",
+      $this->aesEncrypted);
+		$zip->addFromString(
+      $this->config["ffaid"]."_Metadata.xml",
+      $this->getMetadata());
 
 		if($includeUnencrypted) {
-			$zip->addFromString(ffaid."_Payload_unencrypted.xml", $this->dataXmlSigned);
+			$zip->addFromString(
+        $this->config["ffaid"]."_Payload_unencrypted.xml",
+        $this->dataXmlSigned);
 		}
 
 		$zip->close();
@@ -409,11 +425,16 @@ class Transmitter {
     )) throw new Exception("Failed to send email");
   }
 
-  public static function shortcut($di,$shuffle,$corrDocRefId,$taxYear,$format) {
+  public static function shortcut($di,$shuffle,$corrDocRefId,$taxYear,$format,$config) {
     if(count($di)==0) throw new Exception("No data");
-    if($shuffle) $di=Utils::array2shuffledLetters($di,array("ResidenceCountry","posCur","cur")); // shuffle all fields except these... ,"Compte"
+    if($shuffle) {
+      // shuffle all fields except these... ,"Compte"
+      $fieldsNotShuffle = array("ResidenceCountry","posCur","cur")
+      $di=Utils::array2shuffledLetters($di,$fieldsNotShuffle); 
+    }
 
-    $fca=new Transmitter($di,$shuffle,$corrDocRefId,$taxYear,$zipBkp=null);
+    $fca=new Transmitter($di,$shuffle,$corrDocRefId,$taxYear,$config);
+    $fca->start();
     $fca->toXml(); # convert to xml 
 
     if(!$fca->validateXml("payload")) {# validate
@@ -438,9 +459,15 @@ class Transmitter {
     $fca->encryptAesKeyFile();
     //	if(!$fca->verifyAesKeyFileEncrypted()) die("Verification of aes key encryption failed");
     $fca->toZip(true);
-    if($zipBkp) copy($fca->tf4, $zipBkp."/includeUnencrypted_".$fca->file_name);
+    if(array_key_exists($config,"ZipBackupFolder")) {
+      $fnDest=$config["ZipBackupFolder"]."/includeUnencrypted_".$fca->file_name;
+      copy($fca->tf4,$fnDest);
+    }
     $fca->toZip(false);
-    if($zipBkp) copy($fca->tf4,$zipBkp."/submitted_".$fca->file_name);
+    if(array_key_exists($config,"ZipBackupFolder")) {
+      $fnDest=$config["ZipBackupFolder"]."/submitted_".$fca->file_name;
+      copy($fca->tf4,$fnDest);
+    }
 
     return array("fca"=>$fca,"diXml2"=>$diXml2);
   }

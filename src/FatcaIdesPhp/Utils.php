@@ -24,13 +24,19 @@ class Utils {
     }, $di);
   }
 
-  public static function checkConfig() {
-    foreach(array("FatcaKeyPrivate","FatcaXsd","MetadataXsd","ffaid","ffaidReceiver","FatcaCrt") as $x) {
-      if(!defined($x)) throw new Exception(sprintf("Missing variable in config: '%s'",$x));
+  public static function checkConfig($config) {
+    $compulsory = array("FatcaKeyPrivate","FatcaXsd","MetadataXsd","ffaid","ffaidReceiver","FatcaCrt");
+    foreach($compulsory as $x) {
+      if(!array_key_exists($config,$x)) {
+        throw new Exception(sprintf("Missing key in config: '%s'",$x));
+      }
     }
 
-    foreach(array(FatcaXsd,MetadataXsd,FatcaCrt) as $x) {
-      if(!file_exists($x)) throw new Exception(sprintf("Missing file defined in config: '%s'",$x));
+    $shouldExist = array("FatcaXsd","MetadataXsd","FatcaCrt");
+    foreach($shouldExist as $x) {
+      if(!file_exists($config[$x])) {
+        throw new Exception(sprintf("Missing file defined in config: '%s'",$x));
+      }
     }
   }
 

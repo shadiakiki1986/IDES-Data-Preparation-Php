@@ -22,23 +22,31 @@ var $file_name;
 var $from;
 var $to;
 
-function __construct($tf4=false) {
-  Utils::checkConfig();
+// config: php array
+// tf4: temp file?
+function __construct($config=array(),$tf4=false) {
+  $this->tf4=$tf4;
+  $this->config=$config;
+}
+
+function start() {
+  Utils::checkConfig($this->config);
   
-	if(!$tf4) {
-		$tf4=sys_get_temp_dir();
+	if(!$this->tf4) {
+		$this->tf4=sys_get_temp_dir();
 		$temp_file = tempnam(sys_get_temp_dir(), 'Tux');
 		unlink($temp_file);
 		mkdir($temp_file);
-		$tf4=$temp_file;
+		$this->tf4=$temp_file;
 	} else {
-    if(!file_exists($tf4)) throw new Exception(sprintf("Passed folder inexistant: '%s'",$tf4));
+    if(!file_exists($this->tf4)) {
+      throw new Exception(sprintf("Passed folder inexistant: '%s'",$this->tf4));
+    }
   }
 
 	$this->tf1=tempnam("/tmp","");
 	$this->tf2=tempnam("/tmp","");
 	$this->tf3=tempnam("/tmp","");
-	$this->tf4=$tf4;
 
 	$this->ts=time();
 	$this->ts2=strftime("%Y-%m-%dT%H:%M:%SZ",$this->ts);
@@ -73,7 +81,7 @@ function fromZip($filename) {
 	}
 
 	function readFfaPrivateKey($returnResource=true) {
-	  $kk=($this->from==ffaidReceiver?FatcaKeyPrivate:(ffaid?FatcaIrsPublic:die("WTF")));
+	  $kk=($this->from==$this->config["ffaidReceiver"]?$this->config["FatcaKeyPrivate"]:($this->config["ffaid"]?$this->config["FatcaIrsPublic"]:die("WTF")));
 	  $fp=fopen($kk,"r");
 	  $priv_key_string=fread($fp,8192);
 	  fclose($fp);
@@ -110,8 +118,9 @@ function fromZip($filename) {
 		}
 	}
 
-  public static function shortcut($zipFn) {
-    $rx=new Receiver();
+  public static function shortcut($config,$zipFn) {
+    $rx=new Receiver($config);
+    $rx->start();
     $rx->fromZip($zipFn);
     $rx->decryptAesKey();
     $rx->fromEncrypted();

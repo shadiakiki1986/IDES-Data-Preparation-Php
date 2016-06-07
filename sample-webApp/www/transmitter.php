@@ -36,20 +36,18 @@ if(!isset($argc)) {
   }
 }
 
-require_once dirname(__FILE__).'/../../../config.php'; // copy the provided sample in repository/config-sample.php
-require_once ROOT_IDES_DATA.'/vendor/autoload.php'; #  if this line throw an error, I probably forgot to run composer install
-
+if(!defined("ROOT_IDES_DATA")) define("ROOT_IDES_DATA",__DIR__."/../..");
+require_once ROOT_IDES_DATA.'/bootstrap.php';
+require_once ROOT_IDES_DATA.'/src/getFatcaData.php';
 use FatcaIdesPhp\Transmitter;
 
-// if installation instructions were not followed by copying the file getFatcaData-SAMPLE to getFatcaData, then just use the sample file
-if(!file_exists(ROOT_IDES_DATA.'/lib/getFatcaData.php')) {
-	require_once ROOT_IDES_DATA.'/lib/getFatcaData-SAMPLE.php'; // use sample file
-} else {
-	require_once ROOT_IDES_DATA.'/lib/getFatcaData.php';
-}
-
 // check existence
-if(defined(ZipBackupFolder)) if(!file_exists(ZipBackupFolder) || !is_dir(ZipBackupFolder)) throw new Exception("Defined ZipBackupFolder does not exist or is not a folder");
+$config=yaml_parse_file(ROOT_IDES_DATA.'/config.yml');
+if(property_exists($config,"ZipBackupFolder")) {
+  if(!file_exists($config["ZipBackupFolder"]) || !is_dir($config["ZipBackupFolder"])) {
+    throw new Exception("Defined ZipBackupFolder does not exist or is not a folder");
+  }
+}
 
 // 
 if(isset($argc)) {
@@ -97,7 +95,7 @@ if(!array_key_exists("taxYear",$_GET)) $_GET['taxYear']=2014; else $_GET['taxYea
 
 // retrieval from mf db table
 $di=getFatcaData($_GET['taxYear']);
-$tmtr=Transmitter::shortcut($di,$_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear'],$_GET['format'],defined(ZipBackupFolder)?ZipBackupFolder:null);
+$tmtr=Transmitter::shortcut($di,$_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear'],$_GET['format'],$config);
 $fca=$tmtr["fca"];
 $diXml2=$tmtr["diXml2"];
 

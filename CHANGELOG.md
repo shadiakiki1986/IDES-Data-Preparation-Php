@@ -1,3 +1,7 @@
+2016-06-07
+* converting the whole folder to a proper php package installable via composer
+* splitting the sample web app into its own folder
+
 2016-03-17
 * converted scripts in tests to phpunit tests
  * these should be factored out to test the code in the Receiver and Transmitter classes instead of a copy of the code in the tests

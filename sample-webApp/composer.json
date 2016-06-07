@@ -1,0 +1,11 @@
+{
+  "repositories": [
+    {
+      "url": "https://github.com/shadiakiki1986/IDES-Data-Preparation-Php",
+      "type": "git"
+    }
+  ],
+  "require": {
+    "shadiakiki1986/IDES-Data-Preparation-Php": "dev-default"
+  }
+}
