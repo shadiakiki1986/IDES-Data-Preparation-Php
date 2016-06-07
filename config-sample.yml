@@ -1,6 +1,6 @@
 # FFA certificate bought using the private key
 FatcaCrt: "/path/to/ssl_certificate.crt")
-# FFA Private key used to get the FFA SSL certificate
+# FFA Private key used to get the SSL certificate
 FatcaKeyPrivate: "/path/to/institution-fatca-private.pem"
 # FFA public key extracted out of private key above
 FatcaKeyPublic: "/path/to/institution-fatca-public.pem"
