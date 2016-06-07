@@ -3,6 +3,9 @@
 * split out sample web-app to subdirectory
 * write dockerfile and push to hub.docker.com
 * correct documentation
+* write proper tests and add travis-ci
+* publish with composer?
+* generate snake-oil certificate and self-signed keys
 
 2016-01-01
 * in var/www/api/transmitter.php I have a format=metadata but I don''t document it in the file header
