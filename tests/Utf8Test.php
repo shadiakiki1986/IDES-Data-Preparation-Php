@@ -2,6 +2,7 @@
 
 require_once dirname(__FILE__).'/../config.php'; // copy the provided sample in repository/config-sample.php
 require_once ROOT_IDES_DATA.'/lib/Transmitter.php';
+require_once 'fixtures.php';
 
 class Utf8Test extends PHPUnit_Framework_TestCase {
 
