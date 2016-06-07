@@ -1,0 +1,24 @@
+# FFA certificate bought using the private key
+FatcaCrt: "/path/to/ssl_certificate.crt")
+# FFA Private key used to get the FFA SSL certificate
+FatcaKeyPrivate: "/path/to/institution-fatca-private.pem"
+# FFA public key extracted out of private key above
+FatcaKeyPublic: "/path/to/institution-fatca-public.pem"
+
+# some files already downloaded in `INSTALL.md` if instructions were followed
+# IRS public key
+FatcaIrsPublic: ROOT_IDES_DATA.'/downloads/encryption-service_services_irs_gov.crt'
+# Schema file for main submission xml
+FatcaXsd: ROOT_IDES_DATA."/downloads/FATCA XML Schema v1.1/FatcaXML_v1.1.xsd"
+# Schema file for metadata xml
+MetadataXsd: ROOT_IDES_DATA.'/downloads/SenderMetadatav11/FATCA IDES SENDER FILE METADATA XML LIBRARY/FATCA-IDES-SenderFileMetadata-1.1.xsd'
+
+# Fatca Sender GIIN
+ffaid: 'A1BBCD.00000.XY.123'
+# Fatca Receiver GIIN, e.g. IRS
+ffaidReceiver: '000000.00000.TA.840'
+
+# make sure www-data is the owner of the below folder
+# sudo chown www-data:www-data path/to/folder
+# This is in case the references in the unencrypted xml file need to be checked later
+ZipBackupFolder: '/home/shadi/fatca'
