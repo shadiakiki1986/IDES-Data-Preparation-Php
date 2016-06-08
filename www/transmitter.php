@@ -95,7 +95,10 @@ if(!array_key_exists("taxYear",$_GET)) $_GET['taxYear']=2014; else $_GET['taxYea
 
 // retrieval from mf db table
 $di=getFatcaData($_GET['taxYear']);
-$tmtr=Transmitter::shortcut($di,$_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear'],$_GET['format'],$config);
+$tmtr=Transmitter::shortcut(
+  $di,$_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear'],$_GET['format'],
+  !array_key_exists("emailTo",$_GET)?null:$_GET['emailTo'],
+  $config);
 $fca=$tmtr["fca"];
 $diXml2=$tmtr["diXml2"];
 
