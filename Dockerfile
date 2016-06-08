@@ -28,6 +28,10 @@ RUN ln -s ../sites-available/ffamfe-dg-api.conf
 # keys
 COPY keys /var/lib/IDES/keys
 
+# create backup folder
+WORKDIR /var/lib/IDES/bkp
+RUN chown www-data:www-data . -R
+
 # Continue
 COPY . /var/lib/IDES/src
 WORKDIR /var/lib/IDES/src

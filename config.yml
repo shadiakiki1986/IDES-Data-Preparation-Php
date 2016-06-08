@@ -1,8 +1,8 @@
-# FFA certificate bought using the private key
+# SSL certificate bought using the private key, e.g. from Thawte
 FatcaCrt: "/var/lib/IDES/keys/ssl_certificate.crt")
-# FFA Private key used to get the SSL certificate
+# Private key used to get the SSL certificate
 FatcaKeyPrivate: "/var/lib/IDES/keys/institution-fatca-private.pem"
-# FFA public key extracted out of private key above
+# public key extracted out of private key above
 FatcaKeyPublic: "/var/lib/IDES/keys/institution-fatca-public.pem"
 
 # some files already downloaded in `INSTALL.md` if instructions were followed
