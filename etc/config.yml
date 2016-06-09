@@ -1,12 +1,12 @@
 # SSL certificate bought using the private key, e.g. from Thawte
-FatcaCrt: "ssl/mycert.pem"
+FatcaCrt: "etc/ssl/mycert.pem"
 # Private key used to get the SSL certificate
-FatcaKeyPrivate: "ssl/privkey.pem"
+FatcaKeyPrivate: "etc/ssl/privkey.pem"
 # public key extracted out of private key above
-FatcaKeyPublic: "ssl/pubkey.pem"
+FatcaKeyPublic: "etc/ssl/pubkey.pem"
 
 # download folder for IRS public key and schema files
-downloadFolder: 'downloads'
+downloadFolder: 'cache/downloads'
 
 # Fatca Sender GIIN
 ffaid: 'A1BBCD.00000.XY.123'
@@ -16,4 +16,4 @@ ffaidReceiver: '000000.00000.TA.840'
 # make sure www-data is the owner of the below folder
 # sudo chown www-data:www-data path/to/folder
 # This is in case the references in the unencrypted xml file need to be checked later
-ZipBackupFolder: 'bkp'
+ZipBackupFolder: 'cache/bkp'

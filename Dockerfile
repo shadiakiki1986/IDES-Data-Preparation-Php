@@ -27,14 +27,14 @@ COPY . /var/lib/IDES/
 WORKDIR /var/lib/IDES/
 
 # assert config availability
-RUN test -f ws/config.yml && mkdir ws/ssl
+RUN test -f etc/config.yml && mkdir etc/ssl
 
 RUN composer install --quiet
 
 # copy test ssl files
-RUN cp vendor/robrichards/xmlseclibs/tests/mycert.pem ws/ssl/ && \
-    cp vendor/robrichards/xmlseclibs/tests/privkey.pem ws/ssl/ && \
-    cp vendor/shadiakiki1986/fatca-ides-php/tests/FatcaIdesPhp/pubkey.pem ws/ssl/
+RUN cp vendor/robrichards/xmlseclibs/tests/mycert.pem etc/ssl/ && \
+    cp vendor/robrichards/xmlseclibs/tests/privkey.pem etc/ssl/ && \
+    cp vendor/shadiakiki1986/fatca-ides-php/tests/FatcaIdesPhp/pubkey.pem etc/ssl/
 
 # LAUNCH
 ENTRYPOINT ["bash","entrypoint.sh"]

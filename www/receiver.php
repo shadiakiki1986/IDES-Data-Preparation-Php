@@ -7,7 +7,7 @@ if (isset($_FILES['myFile'])) {
 	header('Content-type: text/xml');
 
   if(!defined("ROOT_IDES_DATA")) define("ROOT_IDES_DATA",__DIR__."/..");
-  $config=yaml_parse_file(ROOT_IDES_DATA.'/ws/config.yml');
+  $config=yaml_parse_file(ROOT_IDES_DATA.'/etc/config.yml');
 	$rx=FatcaIdesPhp\Receiver::shortcut($config,$_FILES['myFile']['tmp_name']);
 
 	//	echo "<ol> Received zip:\n";

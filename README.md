@@ -23,8 +23,8 @@ To use it as a CLI
 2. At the terminal inside the image run `php www/transmitter.php --help`
 
 To load the workspace folders to the host, e.g. to see the downloaded files, or the backed up generated files:
-1. Create an empty directory `/home/shadi/ides_ws`
-2. Run image with `docker run -p 8123:80 -d -v /home/shadi/ides_ws:/var/lib/IDES/ws -t shadiakiki1986/ides-data-preparation-php`
+1. Create an empty directory `/home/shadi/ides_cache`
+2. Run image with `docker run -p 8123:80 -d -v /home/shadi/ides_cache:/var/lib/IDES/cache -t shadiakiki1986/ides-data-preparation-php`
 
 To set your own institution GIIN, receiver GIIN, SSL certificate, private/public keys:
 1. Follow the 2 steps above to load the workspace folders
