@@ -30,10 +30,10 @@ error_reporting(E_ALL);
 
 if(!isset($argc)) {
   // http://stackoverflow.com/a/11206244/4126114
-  set_error_handler("warning_handler", E_WARNING);
   function warning_handler($errno, $errstr) { 
     print sprintf("<div style='color:red'>%s: %s</div>",$errno,$errstr);
   }
+  set_error_handler("warning_handler", E_WARNING);
 }
 
 if(!defined("ROOT_IDES_DATA")) define("ROOT_IDES_DATA",__DIR__."/..");

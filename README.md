@@ -22,3 +22,18 @@ To use it as a CLI
 # License
 Please check [[LICENSE]]
 
+# Developer notes
+```bash
+docker build .
+docker run -i -p 80:80 -t CONTAINERID
+docker run -i -p 80:80 -v /home/ubuntu/Development/IDES-Data-Preparation-Php/www:/var/lib/IDES/www -t CONTAINERID
+
+docker build --no-cache .
+docker run -i -p 80:80 --entrypoint bash -t CONTAINERID
+```
+
+When moving to php 7, I need to change
+* the php5-... package names in apt-get install
+* the php5/cli/php.ini paths
+* use pecl install yaml-beta instead of yaml
+* check if php5enmod or just phpenmod
