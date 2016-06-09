@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9e46a3f79e4153097963f7a76d794bb4",
-    "content-hash": "c56766c309822df1582368f546adeed9",
+    "hash": "9455c45c05ea5966c8ecaa8b3813698d",
+    "content-hash": "bdea93a3a6cfc1a34a8ebf3337ecb184",
     "packages": [
         {
             "name": "monolog/monolog",
@@ -165,12 +165,18 @@
             "time": "2015-07-31 15:08:38"
         },
         {
-            "name": "shadiakiki1986/FatcaIdesPhp",
+            "name": "shadiakiki1986/fatca-ides-php",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/shadiakiki1986/FatcaIdesPhp",
-                "reference": "a62aa508f9c8f961865be5a9223526674e1d8b6e"
+                "url": "https://github.com/shadiakiki1986/fatca-ides-php.git",
+                "reference": "645d0b7ef10cf7f759eeba3f701da96772475a73"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shadiakiki1986/fatca-ides-php/zipball/645d0b7ef10cf7f759eeba3f701da96772475a73",
+                "reference": "645d0b7ef10cf7f759eeba3f701da96772475a73",
+                "shasum": ""
             },
             "require": {
                 "monolog/monolog": "^1.19",
@@ -187,17 +193,7 @@
                     "FatcaIdesPhp\\": "src/FatcaIdesPhp"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "FatcaIdesPhp\\": "tests/FatcaIdesPhp"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "parallel-lint . --exclude vendor",
-                    "phpunit"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "CC0 1.0 Universal"
             ],
@@ -208,21 +204,21 @@
                 }
             ],
             "description": "PHP library for generation of FATCA IDES submission files",
-            "homepage": "https://github.com/shadiakiki1986/FatcaIdesPhp",
+            "homepage": "https://github.com/shadiakiki1986/fatca-ides-php",
             "keywords": [
-                "Decryption",
-                "Encryption",
                 "FATCA",
-                "IDES"
+                "IDES",
+                "decryption",
+                "encryption"
             ],
-            "time": "2016-06-09 04:33:41"
+            "time": "2016-06-09 07:55:55"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "shadiakiki1986/fatcaidesphp": 20
+        "shadiakiki1986/fatca-ides-php": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

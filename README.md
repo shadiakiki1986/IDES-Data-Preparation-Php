@@ -1,5 +1,5 @@
 # IDES-Data-Preparation-Php
-This is a sample php web app that uses [FatcaIdesPhp](https://github.com/shadiakiki1986/FatcaIdesPhp) php library to convert bank client data to FATCA files submittable via the IDES gateway.
+This is a sample php web app that uses [fatca-ides-php](https://github.com/shadiakiki1986/fatca-ides-php) php library to convert bank client data to FATCA files submittable via the IDES gateway.
 
 For more information check the [IRS FATCA IDES Technical FAQs](http://www.irs.gov/Businesses/Corporations/FATCA-IDES-Technical-FAQs)
 

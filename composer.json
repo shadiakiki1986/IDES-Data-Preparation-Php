@@ -1,12 +1,6 @@
 {
-  "repositories": [
-    {
-      "url": "https://github.com/shadiakiki1986/FatcaIdesPhp",
-      "type": "git"
-    }
-  ],
   "require": {
-    "shadiakiki1986/FatcaIdesPhp": "dev-default",
+    "shadiakiki1986/fatca-ides-php": "dev-default",
     "monolog/monolog": "^1.19"
   }
 }
