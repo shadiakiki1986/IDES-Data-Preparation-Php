@@ -34,6 +34,11 @@ To set your own institution GIIN, receiver GIIN, SSL certificate, private/public
 5. Copy your certificate, private/pubic keys to `/home/shadi/ides_etc/ssl`, using the same filenames (otherwise change the desired names in the config.yml file)
 6. Re-run the image with the run step above
 
+To set your own `getFatcaData` php function
+1. say it's at `/home/shadi/ides_src/getFatcaData.php`
+2. Run image with `docker run -p 8123:80 -d -v /home/shadi/ides_src:/var/lib/IDES/src -t shadiakiki1986/ides-data-preparation-php`
+3. Note that this only works for a simple php function that doesnt require further package installations
+
 # License
 Please check [[LICENSE]]
 
