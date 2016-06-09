@@ -7,9 +7,9 @@ MAINTAINER Shadi Akiki
 # set up
 RUN apt-get -qq update > /dev/null
 RUN apt-get -qq -y install wget curl git php5-mcrypt php5-cli php-pear php5-common php5-dev libyaml-dev > /dev/null
-RUN curl -sS https://getcomposer.org/installer | php
-RUN chmod +x composer.phar
-RUN mv composer.phar /usr/local/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php && \
+    chmod +x composer.phar && \
+    mv composer.phar /usr/local/bin/composer
 
 # apache configs
 WORKDIR /etc/apache2/sites-enabled
@@ -25,16 +25,16 @@ COPY etc/php5/php.ini /etc/php5/apache2/php.ini
 # Continue
 COPY . /var/lib/IDES/
 WORKDIR /var/lib/IDES/
+
+# assert config availability
+RUN test -f ws/config.yml && mkdir ws/ssl
+
 RUN composer install --quiet
 
 # copy test ssl files
-RUN cp vendor/robrichards/xmlseclibs/tests/mycert.pem ws/ssl/
-RUN cp vendor/robrichards/xmlseclibs/tests/privkey.pem ws/ssl/
-RUN cp vendor/shadiakiki1986/fatca-ides-php/tests/FatcaIdesPhp/pubkey.pem ws/ssl/
-
-# chown of backup folder so that apache can put files there
-RUN chown www-data:www-data ws/bkp -R
-RUN chown www-data:www-data ws/downloads -R
+RUN cp vendor/robrichards/xmlseclibs/tests/mycert.pem ws/ssl/ && \
+    cp vendor/robrichards/xmlseclibs/tests/privkey.pem ws/ssl/ && \
+    cp vendor/shadiakiki1986/fatca-ides-php/tests/FatcaIdesPhp/pubkey.pem ws/ssl/
 
 # LAUNCH
-ENTRYPOINT /usr/sbin/apache2ctl -D FOREGROUND
+ENTRYPOINT ["bash","entrypoint.sh"]
