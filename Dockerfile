@@ -28,9 +28,9 @@ WORKDIR /var/lib/IDES/
 RUN composer install --quiet
 
 # copy test ssl files
-COPY vendor/robrichards/xmlseclibs/tests/mycert.pem ws/ssl/
-COPY vendor/robrichards/xmlseclibs/tests/privkey.pem ws/ssl/
-COPY vendor/shadiakiki1986/FatcaIdesPhp/tests/FatcaIdesPhp/pubkey.pem ws/ssl/
+RUN cp vendor/robrichards/xmlseclibs/tests/mycert.pem ws/ssl/
+RUN cp vendor/robrichards/xmlseclibs/tests/privkey.pem ws/ssl/
+RUN cp vendor/shadiakiki1986/fatca-ides-php/tests/FatcaIdesPhp/pubkey.pem ws/ssl/
 
 # chown of backup folder so that apache can put files there
 RUN chown www-data:www-data ws/bkp -R
