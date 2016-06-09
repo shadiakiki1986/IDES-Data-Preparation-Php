@@ -12,11 +12,11 @@ For other language implementations, please check the [IRS github page](https://g
 You can use this image as a web app or as a CLI.
 
 To use it as a web app: 
-1. Run the dockerfile with `docker run -p 8123:80 -it shadiakiki1986/IDES-Data-Preparation-Php`
+1. Run the dockerfile with `docker run -p 8123:80 -d -t shadiakiki1986/ides-data-preparation-php`
 2. Navigate in your browser to `http://localhost:8123`
 
 To use it as a CLI
-1. Run the dockerfile with `docker run -p 8123:80 -i --entrypoint bash -t shadiakiki1986/IDES-Data-Preparation-Php`
+1. Run the dockerfile with `docker run -p 8123:80 -i --entrypoint bash -t shadiakiki1986/ides-data-preparation-php`
 2. At the terminal inside the image run `php www/transmitter.php --help`
 
 # License
@@ -40,3 +40,4 @@ When moving to php 7, I need to change
 
 To publish app in aws elasticbeanstalk
 * read [this](http://blogs.aws.amazon.com/application-management/post/Tx1ZLAHMVBEDCOC/Dockerizing-a-Python-Web-App)
+* for continuous deployment, couple the travis-ci `after_build` with elasticbeanstalk CLI 
