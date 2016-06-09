@@ -6,6 +6,7 @@
     }
   ],
   "require": {
-    "shadiakiki1986/FatcaIdesPhp": "dev-default"
+    "shadiakiki1986/FatcaIdesPhp": "dev-default",
+    "monolog/monolog": "^1.19"
   }
 }

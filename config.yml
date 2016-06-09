@@ -1,17 +1,12 @@
 # SSL certificate bought using the private key, e.g. from Thawte
-FatcaCrt: "/var/lib/IDES/keys/ssl_certificate.crt")
+FatcaCrt: "vendor/robrichards/xmlseclibs/tests/mycert.pem"
 # Private key used to get the SSL certificate
-FatcaKeyPrivate: "/var/lib/IDES/keys/institution-fatca-private.pem"
+FatcaKeyPrivate: "vendor/robrichards/xmlseclibs/tests/privkey.pem"
 # public key extracted out of private key above
-FatcaKeyPublic: "/var/lib/IDES/keys/institution-fatca-public.pem"
+FatcaKeyPublic: "vendor/shadiakiki1986/FatcaIdesPhp/tests/FatcaIdesPhp/pubkey.pem"
 
-# some files already downloaded in `INSTALL.md` if instructions were followed
-# IRS public key
-FatcaIrsPublic: '/var/lib/IDES/downloads/encryption-service_services_irs_gov.crt'
-# Schema file for main submission xml
-FatcaXsd: "/var/lib/IDES/downloads/FATCA XML Schema v1.1/FatcaXML_v1.1.xsd"
-# Schema file for metadata xml
-MetadataXsd: '/var/lib/IDES/downloads/SenderMetadatav11/FATCA IDES SENDER FILE METADATA XML LIBRARY/FATCA-IDES-SenderFileMetadata-1.1.xsd'
+# download folder for IRS public key and schema files
+downloadFolder: 'downloads'
 
 # Fatca Sender GIIN
 ffaid: 'A1BBCD.00000.XY.123'
@@ -21,4 +16,4 @@ ffaidReceiver: '000000.00000.TA.840'
 # make sure www-data is the owner of the below folder
 # sudo chown www-data:www-data path/to/folder
 # This is in case the references in the unencrypted xml file need to be checked later
-ZipBackupFolder: '/var/lib/IDES/bkp'
+ZipBackupFolder: 'bkp'

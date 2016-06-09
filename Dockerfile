@@ -16,24 +16,18 @@ RUN curl -sS https://getcomposer.org/installer | php
 RUN chmod +x composer.phar
 RUN mv composer.phar /usr/local/bin/composer
 
-# download public files
-WORKDIR /var/lib/IDES/downloads
-RUN download.sh
-
 # apache configs
 WORKDIR /etc/apache2/sites-enabled
 COPY etc/apache2/sites-available/IDES-Data-Preparation-Php-sample.conf ../sites-available/
 RUN ln -s ../sites-available/ffamfe-dg-api.conf
 
-# keys
-COPY keys /var/lib/IDES/keys
-
-# create backup folder
-WORKDIR /var/lib/IDES/bkp
-RUN chown www-data:www-data . -R
-
 # Continue
-COPY . /var/lib/IDES/src
-WORKDIR /var/lib/IDES/src
+COPY . /var/lib/IDES/
+WORKDIR /var/lib/IDES/
 composer install --quiet
-ENTRYPOINT entrypoint.sh
+
+# chown of backup folder so that apache can put files there
+RUN chown www-data:www-data bkp -R
+
+# LAUNCH
+ENTRYPOINT /usr/sbin/apache2ctl -D FOREGROUND

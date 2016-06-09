@@ -36,14 +36,28 @@ if(!isset($argc)) {
   }
 }
 
-if(!defined("ROOT_IDES_DATA")) define("ROOT_IDES_DATA",__DIR__."/../..");
+if(!defined("ROOT_IDES_DATA")) define("ROOT_IDES_DATA",__DIR__."/..");
 require_once ROOT_IDES_DATA.'/bootstrap.php';
 require_once ROOT_IDES_DATA.'/src/getFatcaData.php';
 use FatcaIdesPhp\Transmitter;
+use Monolog\Logger;
+$LOG_LEVEL=Logger::WARNING;
 
-// check existence
+// config preprocess
 $config=yaml_parse_file(ROOT_IDES_DATA.'/config.yml');
-if(property_exists($config,"ZipBackupFolder")) {
+
+// if path strings do not start with "/", then prefix with ROOT_IDES_DATA
+$keysToPrefix=array("FatcaCrt","FatcaKeyPrivate","FatcaKeyPublic","downloadFolder","ZipBackupFolder");
+$keysToPrefix=array_intersect(array_keys($config),$keysToPrefix);
+$keysToPrefix=array_filter($keysToPrefix,function($x) use($config) {
+  return !preg_match("/^\//",$config[$x]);
+});
+foreach($keysToPrefix as $ktp) {
+  $config[$ktp]=ROOT_IDES_DATA."/".$config[$ktp];
+}
+
+// check backup folder existance
+if(array_key_exists("ZipBackupFolder",$config)) {
   if(!file_exists($config["ZipBackupFolder"]) || !is_dir($config["ZipBackupFolder"])) {
     throw new Exception("Defined ZipBackupFolder does not exist or is not a folder");
   }
@@ -52,14 +66,18 @@ if(property_exists($config,"ZipBackupFolder")) {
 // 
 if(isset($argc)) {
   $_GET=array();
-  $options = getopt("hf::sy:e:", array("help","format::","shuffleSkip","year:","emailTo:"));
+  $options = getopt("hdf::sy:e:", array("help","debug","format::","shuffleSkip","year:","emailTo:"));
   foreach($options as $k=>$v) {
     switch($k) {
       case "h":
       case "help":
-        echo "Usage: php ".basename(__FILE__)." --year=2014 [--format=html*|xml|zip] [--shuffleSkip] [--emailTo=s.akiki@ffaprivatebank.com]\n";
+        echo "Usage: php ".basename(__FILE__)." --year=2014 [--format=html*|xml|zip] [--shuffleSkip] [--emailTo=s.akiki@ffaprivatebank.com] --debug\n";
         echo "       php ".basename(__FILE__)." --help\n";
         exit;
+        break;
+      case "d":
+      case "debug":
+        $LOG_LEVEL=Logger::DEBUG;
         break;
       case "f":
       case "format":
@@ -95,12 +113,10 @@ if(!array_key_exists("taxYear",$_GET)) $_GET['taxYear']=2014; else $_GET['taxYea
 
 // retrieval from mf db table
 $di=getFatcaData($_GET['taxYear']);
-$tmtr=Transmitter::shortcut(
+$fca=Transmitter::shortcut(
   $di,$_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear'],$_GET['format'],
   !array_key_exists("emailTo",$_GET)?null:$_GET['emailTo'],
-  $config);
-$fca=$tmtr["fca"];
-$diXml2=$tmtr["diXml2"];
+  $config,$LOG_LEVEL);
 
 if(!array_key_exists("emailTo",$_GET)) {
   switch($_GET['format']) {
@@ -109,7 +125,7 @@ if(!array_key_exists("emailTo",$_GET)) {
       break;
     case "xml":
       Header('Content-type: text/xml');
-      echo($diXml2);
+      echo($fca->dataXmlSigned);
       break;
     case "zip":
       $fca->getZip();

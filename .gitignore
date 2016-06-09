@@ -1,5 +1,10 @@
-config.php
 vendor
-lib/getFatcaData.php
-var/www/index-ffa.html
-downloads/
+bkp/*.zip
+downloads/FATCA IDES SENDER FILE METADATA XML LIBRARY/
+downloads/FATCA XML Schema v1.1/
+downloads/FATCASenderFileMetadataSample_1.1_CAR.xml
+downloads/FATCASenderFileMetadataSample_1.1_NTF.xml
+downloads/FATCASenderFileMetadataSample_1.1_RPT.xml
+downloads/FATCAXMLSchemav1.zip
+downloads/SenderMetadatav1.1.zip
+downloads/encryption-service_services_irs_gov.crt
