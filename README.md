@@ -37,3 +37,6 @@ When moving to php 7, I need to change
 * the php5/cli/php.ini paths
 * use pecl install yaml-beta instead of yaml
 * check if php5enmod or just phpenmod
+
+To publish app in aws elasticbeanstalk
+* read [this](http://blogs.aws.amazon.com/application-management/post/Tx1ZLAHMVBEDCOC/Dockerizing-a-Python-Web-App)
