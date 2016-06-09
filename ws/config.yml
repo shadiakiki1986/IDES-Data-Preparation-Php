@@ -1,9 +1,9 @@
 # SSL certificate bought using the private key, e.g. from Thawte
-FatcaCrt: "vendor/robrichards/xmlseclibs/tests/mycert.pem"
+FatcaCrt: "ssl/mycert.pem"
 # Private key used to get the SSL certificate
-FatcaKeyPrivate: "vendor/robrichards/xmlseclibs/tests/privkey.pem"
+FatcaKeyPrivate: "ssl/privkey.pem"
 # public key extracted out of private key above
-FatcaKeyPublic: "vendor/shadiakiki1986/FatcaIdesPhp/tests/FatcaIdesPhp/pubkey.pem"
+FatcaKeyPublic: "ssl/pubkey.pem"
 
 # download folder for IRS public key and schema files
 downloadFolder: 'downloads'

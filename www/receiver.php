@@ -6,9 +6,9 @@ if (isset($_FILES['myFile'])) {
 	header( "Pragma: no-cache" );
 	header('Content-type: text/xml');
 
-  if(!defined("ROOT_IDES_DATA")) define("ROOT_IDES_DATA",__DIR__."/../..");
-  $config=yaml_parse_file(ROOT_IDES_DATA.'/config.yml');
-	$rx=Receiver::shortcut($config,$_FILES['myFile']['tmp_name']);
+  if(!defined("ROOT_IDES_DATA")) define("ROOT_IDES_DATA",__DIR__."/..");
+  $config=yaml_parse_file(ROOT_IDES_DATA.'/ws/config.yml');
+	$rx=FatcaIdesPhp\Receiver::shortcut($config,$_FILES['myFile']['tmp_name']);
 
 	//	echo "<ol> Received zip:\n";
 	//	echo "<li>Name: ".$_FILES['myFile']['name']."</li>\n";
@@ -21,5 +21,5 @@ if (isset($_FILES['myFile'])) {
 	echo $rx->dataXmlSigned;
 
 } else {
-	print "This php file is used from the IDES file upload section in /var/www/index.html. Please do not access it directly as such";
+	print "This php file is used from the IDES file upload section in /www/index.html. Please do not access it directly as such";
 }

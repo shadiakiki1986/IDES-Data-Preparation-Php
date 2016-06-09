@@ -27,9 +27,14 @@ COPY . /var/lib/IDES/
 WORKDIR /var/lib/IDES/
 RUN composer install --quiet
 
+# copy test ssl files
+COPY vendor/robrichards/xmlseclibs/tests/mycert.pem ws/ssl/
+COPY vendor/robrichards/xmlseclibs/tests/privkey.pem ws/ssl/
+COPY vendor/shadiakiki1986/FatcaIdesPhp/tests/FatcaIdesPhp/pubkey.pem ws/ssl/
+
 # chown of backup folder so that apache can put files there
-RUN chown www-data:www-data bkp -R
-RUN chown www-data:www-data downloads -R
+RUN chown www-data:www-data ws/bkp -R
+RUN chown www-data:www-data ws/downloads -R
 
 # LAUNCH
 ENTRYPOINT /usr/sbin/apache2ctl -D FOREGROUND
