@@ -1,3 +1,10 @@
+2016-06-10
+* add screenshots to github readme as such
+```
++![Building Selection](https://github.com/Sgawrys/TechRTS/raw/master/images/buildingSelection.png "First Screenshot") 
+```
+* fix the readme.md markdown for lists
+
 2016-06-08
 * use copy of certificate and keys from xmlseclib
 * Check the "deploy to heroku" here:
