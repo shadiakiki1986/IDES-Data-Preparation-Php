@@ -40,6 +40,9 @@ To set your own `getFatcaData` php function
 2. Run image with `docker run -p 8123:80 -d -v /home/shadi/ides_src:/var/lib/IDES/src -t shadiakiki1986/ides-data-preparation-php`
 3. Note that this only works for a simple php function that doesnt require further package installations
 
+# Security note
+This demo app will show the field `upload password` in plain text in the URL after clicking on `Get data`
+
 # License
 Please check [[LICENSE]]
 
