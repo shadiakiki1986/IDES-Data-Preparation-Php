@@ -44,16 +44,16 @@ use Monolog\Logger;
 $LOG_LEVEL=Logger::WARNING;
 
 // config preprocess
-$config=yaml_parse_file(ROOT_IDES_DATA.'/ws/config.yml');
+$config=yaml_parse_file(ROOT_IDES_DATA.'/etc/config.yml');
 
-// if path strings do not start with "/", then prefix with ROOT_IDES_DATA/ws
+// if path strings do not start with "/", then prefix with ROOT_IDES_DATA/
 $keysToPrefix=array("FatcaCrt","FatcaKeyPrivate","FatcaKeyPublic","downloadFolder","ZipBackupFolder");
 $keysToPrefix=array_intersect(array_keys($config),$keysToPrefix);
 $keysToPrefix=array_filter($keysToPrefix,function($x) use($config) {
   return !preg_match("/^\//",$config[$x]);
 });
 foreach($keysToPrefix as $ktp) {
-  $config[$ktp]=ROOT_IDES_DATA."/ws/".$config[$ktp];
+  $config[$ktp]=ROOT_IDES_DATA."/".$config[$ktp];
 }
 
 // check backup folder existance
