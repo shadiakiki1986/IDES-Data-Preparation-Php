@@ -262,12 +262,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shadiakiki1986/fatca-ides-php.git",
-                "reference": "fa14a70606b934e771c4b53ca3c3f0534396f1ce"
+                "reference": "980eb208d39db6b56b2a1d771d479d13dcf2cbc6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shadiakiki1986/fatca-ides-php/zipball/fa14a70606b934e771c4b53ca3c3f0534396f1ce",
-                "reference": "fa14a70606b934e771c4b53ca3c3f0534396f1ce",
+                "url": "https://api.github.com/repos/shadiakiki1986/fatca-ides-php/zipball/980eb208d39db6b56b2a1d771d479d13dcf2cbc6",
+                "reference": "980eb208d39db6b56b2a1d771d479d13dcf2cbc6",
                 "shasum": ""
             },
             "require": {
@@ -279,6 +279,9 @@
             "require-dev": {
                 "jakub-onderka/php-parallel-lint": "^0.9",
                 "phpunit/phpunit": "*"
+            },
+            "suggest": {
+                "swiftmailer/swiftmailer": "php library for sending emails"
             },
             "type": "library",
             "autoload": {
@@ -304,7 +307,7 @@
                 "decryption",
                 "encryption"
             ],
-            "time": "2016-06-11 06:31:33"
+            "time": "2016-06-11 08:47:53"
         }
     ],
     "packages-dev": [],
