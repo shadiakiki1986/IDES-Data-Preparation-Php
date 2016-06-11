@@ -152,9 +152,12 @@ if(!array_key_exists("emailTo",$_GET)) {
     default: throw new Exception("Unsupported format ".$_GET['format']);
   }
 } else {
+  $upload=null;
+  if(array_key_exists("uploadUsername",$_GET) && array_key_exists("uploadPassword",$_GET)) $upload = array("username"=>$_GET["uploadUsername"],"password"=>$_GET["uploadPassword"]);
   Transmitter::toEmail(
-    $fca,$_GET["emailTo"],"s.akiki@ffaprivatebank.com","Shadi Akiki","s.akiki@ffaprivatebank.com",
-    array("username"=>$_GET["uploadUsername"],"password"=>$_GET["uploadPassword"]));
+    $fca,$_GET["emailTo"],
+    "s.akiki@ffaprivatebank.com","Shadi Akiki","s.akiki@ffaprivatebank.com",
+    $upload);
 
   echo "Done emailing (and uploading if requested)\n";
 }
