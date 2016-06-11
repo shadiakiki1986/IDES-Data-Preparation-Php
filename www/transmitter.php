@@ -93,6 +93,9 @@ if(isset($argc)) {
 // config preprocess
 $config=yaml_parse_file(ROOT_IDES_DATA.'/etc/config.yml');
 
+// check that email configuration available
+if(array_key_exists("emailTo",$_GET) && !array_key_exists("swiftmailer",$config)) throw new Exception("Emailing requested but not configured on server in etc/config.yml. Aborting");
+
 // if path strings do not start with "/", then prefix with ROOT_IDES_DATA/
 $keysToPrefix=array("FatcaCrt","FatcaKeyPrivate","FatcaKeyPublic","downloadFolder","ZipBackupFolder");
 $keysToPrefix=array_intersect(array_keys($config),$keysToPrefix);
@@ -157,7 +160,7 @@ if(!array_key_exists("emailTo",$_GET)) {
   Transmitter::toEmail(
     $fca,$_GET["emailTo"],
     "s.akiki@ffaprivatebank.com","Shadi Akiki","s.akiki@ffaprivatebank.com",
-    $upload);
+    $upload, $config["swiftmailer"]);
 
   echo "Done emailing (and uploading if requested)\n";
 }
