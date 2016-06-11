@@ -46,15 +46,15 @@ $LOG_LEVEL=Logger::WARNING;
 // 
 if(isset($argc)) {
   $_GET=array();
-  $options = getopt("hdf::sy:e:u:p:", array("help","debug","format::","shuffleSkip","year:","emailTo:","uploadUsername:","uploadPassword:"));
+  $options = getopt("hdf::st:e:u:p:", array("help","debug","format::","shuffleSkip","taxYear:","emailTo:","uploadUsername:","uploadPassword:"));
   foreach($options as $k=>$v) {
     switch($k) {
       case "h":
       case "help":
         echo "Usage: \n";
         echo "       php ".basename(__FILE__)." --help\n";
-        echo "       php ".basename(__FILE__)." --year=2014 [--shuffleSkip] [--debug] [--format=html*|xml|zip]\n";
-        echo "       php ".basename(__FILE__)." --year=2014 [--shuffleSkip] [--debug] [--emailTo=s.akiki@ffaprivatebank.com --uploadUsername=username --uploadPassword=password]\n";
+        echo "       php ".basename(__FILE__)." --taxYear=2014 [--shuffleSkip] [--debug] [--format=html*|xml|zip]\n";
+        echo "       php ".basename(__FILE__)." --taxYear=2014 [--shuffleSkip] [--debug] [--emailTo=s.akiki@ffaprivatebank.com --uploadUsername=username --uploadPassword=password]\n";
         exit;
         break;
       case "d":
@@ -69,8 +69,8 @@ if(isset($argc)) {
       case "shuffleSkip":
         $_GET["shuffle"]="false";
         break;
-      case "y":
-      case "year":
+      case "t":
+      case "taxYear":
         $_GET["taxYear"]=$v;
         break;
       case "e":
@@ -87,7 +87,7 @@ if(isset($argc)) {
         break;
     }
   }
-  if(!array_key_exists("taxYear",$_GET)) die("Please pass --year=2014 for example\n");
+  if(!array_key_exists("taxYear",$_GET)) die("Please pass --taxYear=2014 for example\n");
 }
 
 // config preprocess
