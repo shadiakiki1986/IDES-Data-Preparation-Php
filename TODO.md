@@ -4,9 +4,7 @@
 +![Building Selection](https://github.com/Sgawrys/TechRTS/raw/master/images/buildingSelection.png "First Screenshot") 
 ```
 * fix the readme.md markdown for lists
-* use symfony2 swiftmailer: `composer require swiftmailer/swiftmailer`
- * how to attach: http://stackoverflow.com/questions/25113666/how-to-attach-pdf-to-email-using-swiftmailer-in-symfony2
- * email configuration: http://symfony.com/doc/current/cookbook/email/email.html
+* swiftmailer: I dont use the encryption or `auth_mode` keys or transport in `fatca-ides-php/.../Utils.php/mail_attachment_swiftmailer`
 
 2016-06-08
 * use copy of certificate and keys from xmlseclib

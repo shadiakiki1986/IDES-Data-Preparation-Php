@@ -17,3 +17,11 @@ ffaidReceiver: '000000.00000.TA.840'
 # sudo chown www-data:www-data path/to/folder
 # This is in case the references in the unencrypted xml file need to be checked later
 ZipBackupFolder: 'cache/bkp'
+
+# emailing parameters (optional)
+#swiftmailer:
+#  host:      some.host.com
+#  port: 1234
+#  username:  username
+#  password:  password
+

@@ -43,6 +43,9 @@ To set your own `getFatcaData` php function
 # Security note
 This demo app will show the field `upload password` in plain text in the URL after clicking on `Get data`
 
+# Emailing
+The email smtp configuration is disabled in `etc/config.yml` for the automated build
+
 # License
 Please check [[LICENSE]]
 

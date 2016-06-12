@@ -1,10 +1,11 @@
 vendor
-ws/bkp/*.zip
-ws/downloads/FATCA IDES SENDER FILE METADATA XML LIBRARY/
-ws/downloads/FATCA XML Schema v1.1/
-ws/downloads/FATCASenderFileMetadataSample_1.1_CAR.xml
-ws/downloads/FATCASenderFileMetadataSample_1.1_NTF.xml
-ws/downloads/FATCASenderFileMetadataSample_1.1_RPT.xml
-ws/downloads/FATCAXMLSchemav1.zip
-ws/downloads/SenderMetadatav1.1.zip
-ws/downloads/encryption-service_services_irs_gov.crt
+cache/bkp/*.zip
+cache/downloads/FATCA IDES SENDER FILE METADATA XML LIBRARY/
+cache/downloads/FATCA XML Schema v1.1/
+cache/downloads/FATCASenderFileMetadataSample_1.1_CAR.xml
+cache/downloads/FATCASenderFileMetadataSample_1.1_NTF.xml
+cache/downloads/FATCASenderFileMetadataSample_1.1_RPT.xml
+cache/downloads/FATCAXMLSchemav1.zip
+cache/downloads/SenderMetadatav1.1.zip
+cache/downloads/encryption-service_services_irs_gov.crt
+etc/ssl
