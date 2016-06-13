@@ -109,7 +109,7 @@ foreach($keysToPrefix as $ktp) {
 // check backup folder existance
 if(array_key_exists("ZipBackupFolder",$config)) {
   if(!file_exists($config["ZipBackupFolder"]) || !is_dir($config["ZipBackupFolder"])) {
-    throw new Exception("Defined ZipBackupFolder does not exist or is not a folder");
+    throw new Exception("Defined ZipBackupFolder '".$config["ZipBackupFolder"]."' does not exist or is not a folder");
   }
 }
 
@@ -130,27 +130,27 @@ if(array_key_exists("uploadUsername",$_GET) xor array_key_exists("uploadPassword
 if(!array_key_exists("emailTo",$_GET) && array_key_exists("uploadUsername",$_GET)) throw new Exception("Not allowed to upload without emailing");
 
 // retrieval from mf db table
-$di=getFatcaData($_GET['taxYear']);
-$fca=Transmitter::shortcut(
-  $di,$_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear'],$_GET['format'],
+$fdi=getFatcaData($_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear'],$config);
+$tmtr=Transmitter::shortcut(
+  $fdi,$_GET['format'],
   !array_key_exists("emailTo",$_GET)?null:$_GET['emailTo'],
   $config,$LOG_LEVEL);
 
 if(!array_key_exists("emailTo",$_GET)) {
   switch($_GET['format']) {
     case "html":
-      echo($fca->toHtml());
+      echo($tmtr->fdi->toHtml());
       break;
     case "xml":
       Header('Content-type: text/xml');
-      echo($fca->dataXmlSigned);
+      echo($tmtr->dataXmlSigned);
       break;
     case "zip":
-      $fca->getZip();
+      $tmtr->getZip();
       break;
     case "metadata":
       Header('Content-type: text/xml');
-      echo($fca->getMetadata());
+      echo($tmtr->getMetadata());
       break;
     default: throw new Exception("Unsupported format ".$_GET['format']);
   }
@@ -158,7 +158,7 @@ if(!array_key_exists("emailTo",$_GET)) {
   $upload=null;
   if(array_key_exists("uploadUsername",$_GET) && array_key_exists("uploadPassword",$_GET)) $upload = array("username"=>$_GET["uploadUsername"],"password"=>$_GET["uploadPassword"]);
   Transmitter::toEmail(
-    $fca,$_GET["emailTo"],
+    $tmtr,$_GET["emailTo"],
     "s.akiki@ffaprivatebank.com","Shadi Akiki","s.akiki@ffaprivatebank.com",
     $upload, $config["swiftmailer"]);
 

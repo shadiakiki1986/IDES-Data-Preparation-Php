@@ -262,12 +262,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shadiakiki1986/fatca-ides-php.git",
-                "reference": "395585cb52f421a001284d7454538ee440e85a99"
+                "reference": "7b0fcbf699d5631936f7a5b54bb7c02833eebad0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shadiakiki1986/fatca-ides-php/zipball/395585cb52f421a001284d7454538ee440e85a99",
-                "reference": "395585cb52f421a001284d7454538ee440e85a99",
+                "url": "https://api.github.com/repos/shadiakiki1986/fatca-ides-php/zipball/7b0fcbf699d5631936f7a5b54bb7c02833eebad0",
+                "reference": "7b0fcbf699d5631936f7a5b54bb7c02833eebad0",
                 "shasum": ""
             },
             "require": {
@@ -278,7 +278,8 @@
             },
             "require-dev": {
                 "jakub-onderka/php-parallel-lint": "^0.9",
-                "phpunit/phpunit": "*"
+                "phpunit/phpunit": "*",
+                "shadiakiki1986/xsd-to-php": "dev-master"
             },
             "suggest": {
                 "swiftmailer/swiftmailer": "php library for sending emails"
@@ -286,7 +287,9 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "FatcaIdesPhp\\": "src/FatcaIdesPhp"
+                    "FatcaIdesPhp\\": "src/FatcaIdesPhp",
+                    "FatcaXsdPhp\\": "src/FatcaXsdPhp",
+                    "oecd\\ties\\": "src/FatcaXsdPhp/oecd/ties/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -307,7 +310,7 @@
                 "decryption",
                 "encryption"
             ],
-            "time": "2016-06-11 11:43:35"
+            "time": "2016-06-13 09:24:56"
         }
     ],
     "packages-dev": [],
