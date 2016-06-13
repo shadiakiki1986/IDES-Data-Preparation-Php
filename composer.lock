@@ -262,12 +262,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shadiakiki1986/fatca-ides-php.git",
-                "reference": "7b0fcbf699d5631936f7a5b54bb7c02833eebad0"
+                "reference": "3cfb8b98683afef679689ef4a8e2b7cd175e989b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shadiakiki1986/fatca-ides-php/zipball/7b0fcbf699d5631936f7a5b54bb7c02833eebad0",
-                "reference": "7b0fcbf699d5631936f7a5b54bb7c02833eebad0",
+                "url": "https://api.github.com/repos/shadiakiki1986/fatca-ides-php/zipball/3cfb8b98683afef679689ef4a8e2b7cd175e989b",
+                "reference": "3cfb8b98683afef679689ef4a8e2b7cd175e989b",
                 "shasum": ""
             },
             "require": {
@@ -310,7 +310,7 @@
                 "decryption",
                 "encryption"
             ],
-            "time": "2016-06-13 09:24:56"
+            "time": "2016-06-13 13:27:56"
         }
     ],
     "packages-dev": [],
