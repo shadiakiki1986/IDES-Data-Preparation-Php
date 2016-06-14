@@ -5,10 +5,7 @@
 // Returns object of type FatcaDataArray
 function getFatcaData($shuffle,$corrDocRefId,$taxYear,$config) {
 
-	$di = array(
-		array("Compte"=>"1234","ENT_FIRSTNAME"=>"Clyde","ENT_LASTNAME"=>"Barrow","ENT_FATCA_ID"=>"123-1234-123","ENT_ADDRESS"=>"Some street somewhere","ResidenceCountry"=>"US","posCur"=>100000000,"cur"=>"USD","ENT_TYPE"=>"Individual"),
-		array("Compte"=>"5678","ENT_FIRSTNAME"=>"Bonnie","ENT_LASTNAME"=>"Parker","ENT_FATCA_ID"=>"456-1234-123","ENT_ADDRESS"=>"Dallas, Texas","ResidenceCountry"=>"US","posCur"=>100,"cur"=>"LBP","ENT_TYPE"=>"Individual")
-	);
+  $di=yaml_parse_file(__DIR__.'/../vendor/shadiakiki1986/fatca-ides-php/tests/FatcaIdesPhp/fdatIndividual.yml');
 
   if($shuffle) {
     // shuffle all fields except these... ,"Compte"
