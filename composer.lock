@@ -301,12 +301,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shadiakiki1986/fatca-ides-php.git",
-                "reference": "272b7a75e2f28beadf237fb5ed51421bc0ba0dea"
+                "reference": "ecbd795792abe761320dce2cef1ec5493ca66b33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shadiakiki1986/fatca-ides-php/zipball/272b7a75e2f28beadf237fb5ed51421bc0ba0dea",
-                "reference": "272b7a75e2f28beadf237fb5ed51421bc0ba0dea",
+                "url": "https://api.github.com/repos/shadiakiki1986/fatca-ides-php/zipball/ecbd795792abe761320dce2cef1ec5493ca66b33",
+                "reference": "ecbd795792abe761320dce2cef1ec5493ca66b33",
                 "shasum": ""
             },
             "require": {
@@ -349,7 +349,7 @@
                 "decryption",
                 "encryption"
             ],
-            "time": "2016-06-14 04:39:45"
+            "time": "2016-06-14 06:39:20"
         },
         {
             "name": "zendframework/zend-console",
