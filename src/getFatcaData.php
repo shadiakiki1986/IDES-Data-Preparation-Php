@@ -9,7 +9,7 @@ function getFatcaData($shuffle,$corrDocRefId,$taxYear,$config) {
 
   if($shuffle) {
     // shuffle all fields except these... ,"Compte"
-    $fieldsNotShuffle = array("ResidenceCountry","posCur","cur");
+    $fieldsNotShuffle = array("ResidenceCountry","posCur","cur","ENT_TYPE");
     $di=\FatcaIdesPhp\Utils::array2shuffledLetters($di,$fieldsNotShuffle); 
   }
 
