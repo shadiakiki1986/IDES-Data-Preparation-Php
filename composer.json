@@ -1,6 +1,13 @@
 {
+  "repositories": [
+    { 
+      "url": "https://github.com/shadiakiki1986/XSD-to-PHP",
+      "type": "git"
+    }
+  ],
   "require": {
-    "shadiakiki1986/fatca-ides-php": "dev-default",
-    "monolog/monolog": "^1.19"
+    "shadiakiki1986/fatca-ides-php": "dev-master",
+    "monolog/monolog": "^1.19",
+    "shadiakiki1986/XSD-to-PHP": "dev-master"
   }
 }
