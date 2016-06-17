@@ -94,7 +94,9 @@ if(isset($argc)) {
 $config=yaml_parse_file(ROOT_IDES_DATA.'/etc/config.yml');
 
 // check that email configuration available
-if(array_key_exists("emailTo",$_GET) && !array_key_exists("swiftmailer",$config)) throw new Exception("Emailing requested but not configured on server in etc/config.yml. Aborting");
+if(array_key_exists("emailTo",$_GET) && !array_key_exists("swiftmailer",$config)) {
+  throw new Exception("Emailing requested but not configured on server in etc/config.yml. Aborting");
+}
 
 // if path strings do not start with "/", then prefix with ROOT_IDES_DATA/
 $keysToPrefix=array("FatcaCrt","FatcaKeyPrivate","FatcaKeyPublic","downloadFolder","ZipBackupFolder");
@@ -114,8 +116,18 @@ if(array_key_exists("ZipBackupFolder",$config)) {
 }
 
 // argument checking
+if(array_key_exists("emailTo",$_GET)) $_GET['format']='email';
+if(array_key_exists("uploadUsername",$_GET) && array_key_exists("uploadPassword",$_GET)) {
+  if(!array_key_exists("format",$_GET)) {
+    $_GET["format"]="upload";
+  } else if($_GET["format"]=="email") {
+    $_GET["format"]="emailAndUpload";
+  }
+}
 if(!array_key_exists("format",$_GET)) $_GET['format']="html"; # default
-if(!in_array($_GET['format'],array("html","xml","zip","metadata"))) throw new Exception("Unsupported format. Please use one of: html, xml, zip, metadata");
+if(!in_array($_GET['format'],array("html","xml","zip","metadata","upload","emailAndUpload","email"))) throw new Exception("Unsupported format. Please use one of: html, xml, zip, metadata");
+
+if($_GET["format"]=="email" && !array_key_exists("emailTo",$_GET)) $_GET["emailTo"]="s.akiki@ffaprivatebank.com"; // default
 
 if(!array_key_exists("shuffle",$_GET)) $_GET['shuffle']="true"; # default
 if(!in_array($_GET['shuffle'],array("true","false"))) throw new Exception("Unsupported shuffle. Please use true or false");
@@ -127,7 +139,7 @@ if(!array_key_exists("taxYear",$_GET)) $_GET['taxYear']=2014; else $_GET['taxYea
 
 if(array_key_exists("uploadUsername",$_GET) xor array_key_exists("uploadPassword",$_GET)) throw new Exception("Missing one of username or password");
 
-if(!array_key_exists("emailTo",$_GET) && array_key_exists("uploadUsername",$_GET)) throw new Exception("Not allowed to upload without emailing");
+if(!array_key_exists("emailTo",$_GET) && array_key_exists("uploadUsername",$_GET) && $_GET["shuffle"]!="true") throw new Exception("Not allowed to upload without emailing for live data");
 
 // retrieval from mf db table
 $fdi=getFatcaData($_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear'],$config);
@@ -136,31 +148,38 @@ $tmtr=Transmitter::shortcut(
   !array_key_exists("emailTo",$_GET)?null:$_GET['emailTo'],
   $config,$LOG_LEVEL);
 
-if(!array_key_exists("emailTo",$_GET)) {
-  switch($_GET['format']) {
-    case "html":
-      echo($tmtr->fdi->toHtml());
-      break;
-    case "xml":
-      Header('Content-type: text/xml');
-      echo($tmtr->dataXmlSigned);
-      break;
-    case "zip":
-      $tmtr->getZip();
-      break;
-    case "metadata":
-      Header('Content-type: text/xml');
-      echo($tmtr->getMetadata());
-      break;
-    default: throw new Exception("Unsupported format ".$_GET['format']);
-  }
-} else {
-  $upload=null;
-  if(array_key_exists("uploadUsername",$_GET) && array_key_exists("uploadPassword",$_GET)) $upload = array("username"=>$_GET["uploadUsername"],"password"=>$_GET["uploadPassword"]);
-  Transmitter::toEmail(
-    $tmtr,$_GET["emailTo"],
-    "s.akiki@ffaprivatebank.com","Shadi Akiki","s.akiki@ffaprivatebank.com",
-    $upload, $config["swiftmailer"]);
+switch($_GET['format']) {
+  case "html":
+    echo($tmtr->fdi->toHtml());
+    break;
+  case "xml":
+    Header('Content-type: text/xml');
+    echo($tmtr->dataXmlSigned);
+    break;
+  case "zip":
+    $tmtr->getZip();
+    break;
+  case "metadata":
+    Header('Content-type: text/xml');
+    echo($tmtr->getMetadata());
+    break;
+  case "email":
+  case "upload":
+  case "emailAndUpload":
+    if(in_array($_GET["format"],array("email","emailAndUpload"))) {
+      $tmtr->toEmail(
+        $_GET["emailTo"],
+        "s.akiki@ffaprivatebank.com","Shadi Akiki","s.akiki@ffaprivatebank.com",
+        $config["swiftmailer"]);
+    }
 
-  echo "Done emailing (and uploading if requested)\n";
+    if(in_array($_GET["format"],array("upload","emailAndUpload"))) {
+      $upload = array("username"=>$_GET["uploadUsername"],"password"=>$_GET["uploadPassword"]);
+      $csm = null;
+      if($_GET["format"]=="emailAndUpload") $csm = $config["swiftmailer"];
+      $tmtr->toUpload($upload,$csm);
+    }
+
+    break;
+  default: throw new Exception("Unsupported format ".$_GET['format']);
 }
