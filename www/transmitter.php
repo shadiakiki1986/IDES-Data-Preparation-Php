@@ -46,7 +46,7 @@ $LOG_LEVEL=Logger::WARNING;
 // 
 if(isset($argc)) {
   $_GET=array();
-  $options = getopt("hdf::st:e:u:p:", array("help","debug","format::","shuffleSkip","taxYear:","emailTo:","uploadUsername:","uploadPassword:"));
+  $options = getopt("hdf::st:e:u:p:", array("help","debug","format::","shuffleSkip","taxYear:","emailTo:","idesUsername:","idesPassword:"));
   foreach($options as $k=>$v) {
     switch($k) {
       case "h":
@@ -54,7 +54,7 @@ if(isset($argc)) {
         echo "Usage: \n";
         echo "       php ".basename(__FILE__)." --help\n";
         echo "       php ".basename(__FILE__)." --taxYear=2014 [--shuffleSkip] [--debug] [--format=html*|xml|zip]\n";
-        echo "       php ".basename(__FILE__)." --taxYear=2014 [--shuffleSkip] [--debug] [--emailTo=s.akiki@ffaprivatebank.com --uploadUsername=username --uploadPassword=password]\n";
+        echo "       php ".basename(__FILE__)." --taxYear=2014 [--shuffleSkip] [--debug] [--emailTo=s.akiki@ffaprivatebank.com --idesUsername=username --idesPassword=password]\n";
         exit;
         break;
       case "d":
@@ -78,12 +78,12 @@ if(isset($argc)) {
         $_GET["emailTo"]=$v;
         break;
       case "u":
-      case "uploadUsername":
-        $_GET["uploadUsername"]=$v;
+      case "idesUsername":
+        $_GET["idesUsername"]=$v;
         break;
       case "p":
-      case "uploadPassword":
-        $_GET["uploadPassword"]=$v;
+      case "idesPassword":
+        $_GET["idesPassword"]=$v;
         break;
     }
   }
@@ -117,7 +117,7 @@ if(array_key_exists("ZipBackupFolder",$config)) {
 
 // argument checking
 if(array_key_exists("emailTo",$_GET)) $_GET['format']='email';
-if(array_key_exists("uploadUsername",$_GET) && array_key_exists("uploadPassword",$_GET)) {
+if(array_key_exists("idesUsername",$_GET) && array_key_exists("idesPassword",$_GET)) {
   if(!array_key_exists("format",$_GET)) {
     $_GET["format"]="upload";
   } else if($_GET["format"]=="email") {
@@ -137,9 +137,9 @@ if(!array_key_exists("CorrDocRefId",$_GET)) $_GET['CorrDocRefId']=false;
 
 if(!array_key_exists("taxYear",$_GET)) $_GET['taxYear']=2014; else $_GET['taxYear']=(int)$_GET['taxYear'];
 
-if(array_key_exists("uploadUsername",$_GET) xor array_key_exists("uploadPassword",$_GET)) throw new Exception("Missing one of username or password");
+if(array_key_exists("idesUsername",$_GET) xor array_key_exists("idesPassword",$_GET)) throw new Exception("Missing one of username or password");
 
-if(!array_key_exists("emailTo",$_GET) && array_key_exists("uploadUsername",$_GET) && $_GET["shuffle"]!="true") throw new Exception("Not allowed to upload without emailing for live data");
+if(!array_key_exists("emailTo",$_GET) && array_key_exists("idesUsername",$_GET) && $_GET["shuffle"]!="true") throw new Exception("Not allowed to upload without emailing for live data");
 
 // retrieval from mf db table
 $fdi=getFatcaData($_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear'],$config);
@@ -174,7 +174,7 @@ switch($_GET['format']) {
     }
 
     if(in_array($_GET["format"],array("upload","emailAndUpload"))) {
-      $upload = array("username"=>$_GET["uploadUsername"],"password"=>$_GET["uploadPassword"]);
+      $upload = array("username"=>$_GET["idesUsername"],"password"=>$_GET["idesPassword"]);
       $csm = null;
       if($_GET["format"]=="emailAndUpload") $csm = $config["swiftmailer"];
       $tmtr->toUpload($upload,$csm);

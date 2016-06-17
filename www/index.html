@@ -32,11 +32,11 @@
   <li>Email to: <input type="text" id="emailTo"> (leave empty to not email)</li>
 	<li>Upload to IDES gateway:
 		<ul>
-			<li>Username: <input type="text" id="uploadUsername"></li>
-			<li>Password: <input type="password" id="uploadPassword"></li>
+			<li>Username: <input type="text" id="idesUsername"></li>
+			<li>Password: <input type="password" id="idesPassword"></li>
 		</ul>
 	</li>
-	<li><a href="transmitter.php?format=html&shuffle=false&taxYear=2014" target="_blank" id="datalink">Get data</a></li>
+	<li><a href="transmitter.php?format=html&shuffle=false&taxYear=2014" target="_blank" id="datalinkTransmitter">Get data</a></li>
 	</ul>
 </li>
 <li>
@@ -46,31 +46,42 @@
 	<input type="submit" value="Read" disabled id="submitBtn" >
 	</form>
 </li>
+<li>
+  Check latest file received from IDES:
+	<a href="receiver.php" target="_blank" id="datalinkReceiver">Get data</a>
+</li>
 </ul>
 <script type="text/javascript">
 document.getElementById('shuffled').onchange=
 document.getElementById('format').onchange=
 document.getElementById('corrDocRefId').onchange=
 document.getElementById('emailTo').onchange=
-document.getElementById('uploadUsername').onchange=
-document.getElementById('uploadPassword').onchange=
+document.getElementById('idesUsername').onchange=
+document.getElementById('idesPassword').onchange=
 document.getElementById('taxYear').onchange=function(e) {
 	f=document.getElementById("format").value;
 	s=document.getElementById("shuffled").checked;
   c=document.getElementById("corrDocRefId").value;
   e=document.getElementById("emailTo").value;
-  u=document.getElementById("uploadUsername").value;
-  p=document.getElementById("uploadPassword").value;
+  u=document.getElementById("idesUsername").value;
+  p=document.getElementById("idesPassword").value;
 	y=document.getElementById("taxYear").value;
 	h="transmitter.php?format="+f+"&shuffle="+(s?"true":"false")+"&taxYear="+y;
 	if(c.length>0) {
 		h+="&CorrDocRefId="+c;
 	} 
   if(e.length>0) { h+="&emailTo="+e; }
-  if(u.length>0) { h+="&uploadUsername="+u; }
-  if(p.length>0) { h+="&uploadPassword="+p; }
+  if(u.length>0) { h+="&idesUsername="+u; }
+  if(p.length>0) { h+="&idesPassword="+p; }
 
-	document.getElementById("datalink").href=h;
+	document.getElementById("datalinkTransmitter").href=h;
+
+  // receiver set url
+	h="receiver.php?shuffle="+(s?"true":"false");
+  if(u.length>0) { h+="&idesUsername="+u; }
+  if(p.length>0) { h+="&idesPassword="+p; }
+	document.getElementById("datalinkReceiver").href=h;
+
 }
 
 document.getElementById('myFile').onchange = function(e) {
