@@ -116,30 +116,26 @@ if(array_key_exists("ZipBackupFolder",$config)) {
 }
 
 // argument checking
-if(array_key_exists("emailTo",$_GET)) $_GET['format']='email';
-if(array_key_exists("idesUsername",$_GET) && array_key_exists("idesPassword",$_GET)) {
-  if(!array_key_exists("format",$_GET)) {
-    $_GET["format"]="upload";
-  } else if($_GET["format"]=="email") {
-    $_GET["format"]="emailAndUpload";
-  }
-}
 if(!array_key_exists("format",$_GET)) $_GET['format']="html"; # default
 if(!in_array($_GET['format'],array("html","xml","zip","metadata","upload","emailAndUpload","email"))) throw new Exception("Unsupported format. Please use one of: html, xml, zip, metadata");
 
-if($_GET["format"]=="email" && !array_key_exists("emailTo",$_GET)) $_GET["emailTo"]="s.akiki@ffaprivatebank.com"; // default
+if(in_array($_GET["format"],array("email","emailAndUpload")) && !array_key_exists("emailTo",$_GET)) $_GET["emailTo"]="s.akiki@ffaprivatebank.com"; // default
 
-if(!array_key_exists("shuffle",$_GET)) $_GET['shuffle']="true"; # default
-if(!in_array($_GET['shuffle'],array("true","false"))) throw new Exception("Unsupported shuffle. Please use true or false");
-$_GET['shuffle']=($_GET['shuffle']=="true");
+if(!array_key_exists("shuffle",$_GET)) {
+  $_GET['shuffle']=true; # default
+} else {
+  if(!in_array($_GET['shuffle'],array("true","false"))) throw new Exception("Unsupported shuffle. Please use true or false");
+  $_GET['shuffle']=($_GET['shuffle']=="true");
+}
 
 if(!array_key_exists("CorrDocRefId",$_GET)) $_GET['CorrDocRefId']=false;
 
 if(!array_key_exists("taxYear",$_GET)) $_GET['taxYear']=2014; else $_GET['taxYear']=(int)$_GET['taxYear'];
 
-if(array_key_exists("idesUsername",$_GET) xor array_key_exists("idesPassword",$_GET)) throw new Exception("Missing one of username or password");
+if(in_array($_GET["format"],array("upload","emailAndUpload")) &&
+  !(array_key_exists("idesUsername",$_GET) && array_key_exists("idesPassword",$_GET))) throw new Exception("Missing upload username/password");
 
-if(!array_key_exists("emailTo",$_GET) && array_key_exists("idesUsername",$_GET) && $_GET["shuffle"]!="true") throw new Exception("Not allowed to upload without emailing for live data");
+if($_GET["format"]=="upload" && !$_GET["shuffle"]) throw new Exception("Not allowed to upload without emailing for live data");
 
 // retrieval from mf db table
 $fdi=getFatcaData($_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear'],$config);

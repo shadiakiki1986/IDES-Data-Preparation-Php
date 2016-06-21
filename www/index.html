@@ -18,18 +18,21 @@
 			<option value="xml">XML</option>
 			<option value="zip">Zip</option>
 			<option value="metadata">Metadata</option>
+      <option value="email">Email</option>
+      <option value="emailAndUpload">Email &amp; Upload</option>
 		</select>
 		<small><ul>
 		<li>HTML: To see data in tabular format</li>
 		<li>Xml: To see the data as it is stored in the file to be transmitted to IDES</li>
 		<li>Zip: To get the file that should be transmitted to IDES</li>
-		<li><i>Note: This format field will be ignored if the email field below is filed</i></li>
+		<li>Email: Send all files (html, xml, zip) by email. Needs email field below</li>
+		<li>Email and Upload: Send all files (html, xml, zip) by email and upload zip to ides gateway. Needs email field below + username/password on ides gateway</li>
 		</ul></small>
 	</li>
 	<li><input type="checkbox" id="shuffled">&nbsp;Shuffled</li>
 	<li>Document reference ID being corrected: <input type="text" id="corrDocRefId"></li>
 	<li><select id="taxYear"><option value="2014" selected>2014</option><option value="2015">2015</option><option value="2016">2016</option></select></li>
-  <li>Email to: <input type="text" id="emailTo"> (leave empty to not email)</li>
+  <li>Email to: <input type="text" id="emailTo"></li>
 	<li>Upload to IDES gateway:
 		<ul>
 			<li>Username: <input type="text" id="idesUsername"></li>
