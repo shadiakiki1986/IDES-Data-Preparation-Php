@@ -94,9 +94,10 @@ if(isset($argc)) {
 $config=yaml_parse_file(ROOT_IDES_DATA.'/etc/config.yml');
 
 // check that email configuration available
-if(array_key_exists("emailTo",$_GET) && !array_key_exists("swiftmailer",$config)) {
+if(in_array($_GET["format"],array("email","emailAndUpload")) && !array_key_exists("swiftmailer",$config)) {
   throw new Exception("Emailing requested but not configured on server in etc/config.yml. Aborting");
 }
+if(in_array($_GET["format"],array("email","emailAndUpload"))) Transmitter::verifySwiftmailerConfig($config["swiftmailer"]);
 
 // if path strings do not start with "/", then prefix with ROOT_IDES_DATA/
 $keysToPrefix=array("FatcaCrt","FatcaKeyPrivate","FatcaKeyPublic","downloadFolder","ZipBackupFolder");
@@ -165,7 +166,6 @@ switch($_GET['format']) {
     if(in_array($_GET["format"],array("email","emailAndUpload"))) {
       $tmtr->toEmail(
         $_GET["emailTo"],
-        "s.akiki@ffaprivatebank.com","Shadi Akiki","s.akiki@ffaprivatebank.com",
         $config["swiftmailer"]);
     }
 
@@ -173,7 +173,7 @@ switch($_GET['format']) {
       $upload = array("username"=>$_GET["idesUsername"],"password"=>$_GET["idesPassword"]);
       $csm = null;
       if($_GET["format"]=="emailAndUpload") $csm = $config["swiftmailer"];
-      $tmtr->toUpload($upload,$csm);
+      $tmtr->toUpload($upload,$_GET["emailTo"],$csm);
     }
 
     break;
