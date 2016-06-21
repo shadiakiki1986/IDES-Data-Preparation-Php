@@ -26,38 +26,39 @@ if (isset($_FILES['myFile'])) {
 }
 //-----------------------------------
 
-if(!isset($argc)) throw new Exception("Neither file uploaded, nor sftp credentials passed to check latest file. Aborting.");
-
-$_GET=array();
 $LOG_LEVEL=Monolog\Logger::WARNING;
-$options = getopt("hdu:p:s", array("help","debug","idesUsername:","idesPassword:","shuffleSkip"));
-foreach($options as $k=>$v) {
-  switch($k) {
-    case "h":
-    case "help":
-      echo "Usage: \n";
-      echo "       php ".basename(__FILE__)." --help\n";
-      echo "       php ".basename(__FILE__)." [--debug] --idesUsername=username --idesPassword=password [--shuffleSkip]\n";
-      exit;
-      break;
-    case "d":
-    case "debug":
-      $LOG_LEVEL=Monolog\Logger::DEBUG;
-      break;
-    case "u":
-    case "idesUsername":
-      $_GET["idesUsername"]=$v;
-      break;
-    case "p":
-    case "idesPassword":
-      $_GET["idesPassword"]=$v;
-      break;
-    case "s":
-    case "shuffleSkip":
-      $_GET["shuffle"]="false";
-      break;
+if(isset($argc)) {
+  $_GET=array();
+  $options = getopt("hdu:p:s", array("help","debug","idesUsername:","idesPassword:","shuffleSkip"));
+  foreach($options as $k=>$v) {
+    switch($k) {
+      case "h":
+      case "help":
+        echo "Usage: \n";
+        echo "       php ".basename(__FILE__)." --help\n";
+        echo "       php ".basename(__FILE__)." [--debug] --idesUsername=username --idesPassword=password [--shuffleSkip]\n";
+        exit;
+        break;
+      case "d":
+      case "debug":
+        $LOG_LEVEL=Monolog\Logger::DEBUG;
+        break;
+      case "u":
+      case "idesUsername":
+        $_GET["idesUsername"]=$v;
+        break;
+      case "p":
+      case "idesPassword":
+        $_GET["idesPassword"]=$v;
+        break;
+      case "s":
+      case "shuffleSkip":
+        $_GET["shuffle"]="false";
+        break;
+    }
   }
 }
+
 if(!array_key_exists("idesUsername",$_GET) || !array_key_exists("idesPassword",$_GET)) die("Please pass --idesUsername=... --idesPassword=...\n");
 
 if(!array_key_exists("shuffle",$_GET)) $_GET['shuffle']="true"; # default
@@ -68,7 +69,7 @@ $rx=FatcaIdesPhp\Receiver::shortcut(
   $config,
   null,
   array("username"=>$_GET["idesUsername"],"password"=>$_GET["idesPassword"]),
-  $_GET["shuffleSkip"]=="true"?"live":"test",
+  $_GET["shuffle"]=="true"?"live":"test",
   $LOG_LEVEL
 );
 echo $rx->dataXmlSigned;
