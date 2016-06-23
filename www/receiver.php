@@ -6,7 +6,15 @@ header( "Pragma: no-cache" );
 header('Content-type: text/xml');
 
 require_once __DIR__.'/../bootstrap.php';
+
 $config=yaml_parse_file(__DIR__.'/../etc/config.yml');
+$dm = new \FatcaIdesPhp\Downloader();
+$cm = new \FatcaIdesPhp\ConfigManager($config,$dm);
+$cm->prefixIfNeeded(__DIR__."/..");
+$cm->checkExist();
+if(count($cm->msgs)>0) throw new \Exception(implode("\n",$cm->msgs));
+$config = $cm->config;
+
 $zipfile = null;
 //-----------------------------------
 if (isset($_FILES['myFile'])) {
@@ -69,7 +77,7 @@ $rx=FatcaIdesPhp\Receiver::shortcut(
   $config,
   null,
   array("username"=>$_GET["idesUsername"],"password"=>$_GET["idesPassword"]),
-  $_GET["shuffle"]=="true"?"live":"test",
+  $_GET["shuffle"]?"test":"live",
   $LOG_LEVEL
 );
 echo $rx->dataXmlSigned;

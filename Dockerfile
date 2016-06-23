@@ -27,7 +27,7 @@ COPY . /var/lib/IDES/
 WORKDIR /var/lib/IDES/
 
 # assert config availability
-RUN test -f etc/config.yml && mkdir etc/ssl
+RUN test -f etc/config.yml && mkdir etc/ssl && mkdir -p cache/bkp && mkdir cache/downloads
 
 RUN composer install --quiet
 

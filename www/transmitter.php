@@ -92,29 +92,18 @@ if(isset($argc)) {
 
 // config preprocess
 $config=yaml_parse_file(ROOT_IDES_DATA.'/etc/config.yml');
+$dm = new \FatcaIdesPhp\Downloader();
+$cm = new \FatcaIdesPhp\ConfigManager($config,$dm);
+$cm->prefixIfNeeded(ROOT_IDES_DATA);
+$cm->checkExist();
+if(count($cm->msgs)>0) throw new \Exception(implode("\n",$cm->msgs));
+$config = $cm->config;
 
 // check that email configuration available
 if(in_array($_GET["format"],array("email","emailAndUpload")) && !array_key_exists("swiftmailer",$config)) {
   throw new Exception("Emailing requested but not configured on server in etc/config.yml. Aborting");
 }
 if(in_array($_GET["format"],array("email","emailAndUpload"))) Transmitter::verifySwiftmailerConfig($config["swiftmailer"]);
-
-// if path strings do not start with "/", then prefix with ROOT_IDES_DATA/
-$keysToPrefix=array("FatcaCrt","FatcaKeyPrivate","FatcaKeyPublic","downloadFolder","ZipBackupFolder");
-$keysToPrefix=array_intersect(array_keys($config),$keysToPrefix);
-$keysToPrefix=array_filter($keysToPrefix,function($x) use($config) {
-  return !preg_match("/^\//",$config[$x]);
-});
-foreach($keysToPrefix as $ktp) {
-  $config[$ktp]=ROOT_IDES_DATA."/".$config[$ktp];
-}
-
-// check backup folder existance
-if(array_key_exists("ZipBackupFolder",$config)) {
-  if(!file_exists($config["ZipBackupFolder"]) || !is_dir($config["ZipBackupFolder"])) {
-    throw new Exception("Defined ZipBackupFolder '".$config["ZipBackupFolder"]."' does not exist or is not a folder");
-  }
-}
 
 // argument checking
 if(!array_key_exists("format",$_GET)) $_GET['format']="html"; # default
