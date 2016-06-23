@@ -1,3 +1,7 @@
+2016-06-23
+* move `sftpStatus.php` to here and link from index.html
+ * perhaps also use ides credentials form input instead of stored in config
+
 2016-06-10
 * add screenshots to github readme as such
 ```
