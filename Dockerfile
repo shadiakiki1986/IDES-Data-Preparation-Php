@@ -1,4 +1,4 @@
-FROM eboraas/apache-php
+FROM php:7-apache
 MAINTAINER Shadi Akiki
 
 # use apt-cacher
@@ -6,7 +6,13 @@ MAINTAINER Shadi Akiki
 
 # set up
 RUN apt-get -qq update > /dev/null
-RUN apt-get -qq -y install wget curl git php5-mcrypt php5-cli php-pear php5-common php5-dev libyaml-dev > /dev/null
+RUN apt-get -qq -y install curl git libmcrypt-dev libyaml-dev > /dev/null
+RUN docker-php-ext-install mcrypt
+RUN apt-get -qq -y install zlib1g-dev > /dev/null
+RUN pecl channel-update pecl.php.net && \
+    pecl install zip yaml-beta < /dev/null
+RUN docker-php-ext-enable yaml zip mcrypt
+
 RUN curl -sS https://getcomposer.org/installer | php && \
     chmod +x composer.phar && \
     mv composer.phar /usr/local/bin/composer
@@ -17,8 +23,6 @@ COPY etc/apache2/sites-available/IDES-Data-Preparation-Php-sample.conf ../sites-
 RUN ln -s ../sites-available/IDES-Data-Preparation-Php-sample.conf
 
 # php configs
-RUN php5enmod mcrypt
-RUN pecl install yaml > /dev/null #  zip
 COPY etc/php5/php.ini /etc/php5/cli/php.ini
 COPY etc/php5/php.ini /etc/php5/apache2/php.ini
 

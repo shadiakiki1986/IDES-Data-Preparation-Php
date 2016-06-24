@@ -5,4 +5,5 @@ mkdir -p cache/bkp cache/downloads && \
     chown www-data:www-data cache/bkp cache/downloads -R
 
 # LAUNCH
-/usr/sbin/apache2ctl -D FOREGROUND
+apache2-foreground # /usr/sbin/apache2ctl -D FOREGROUND
+
