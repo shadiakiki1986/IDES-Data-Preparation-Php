@@ -100,6 +100,7 @@ if(count($cm->msgs)>0) throw new \Exception(implode("\n",$cm->msgs));
 $config = $cm->config;
 
 // check that email configuration available
+if(!array_key_exists("format",$_GET)) throw new Exception("Missing format");
 if(in_array($_GET["format"],array("email","emailAndUpload")) && !array_key_exists("swiftmailer",$config)) {
   throw new Exception("Emailing requested but not configured on server in etc/config.yml. Aborting");
 }
