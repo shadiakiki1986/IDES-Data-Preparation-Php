@@ -23,8 +23,9 @@ COPY etc/apache2/sites-available/IDES-Data-Preparation-Php-sample.conf ../sites-
 RUN ln -s ../sites-available/IDES-Data-Preparation-Php-sample.conf
 
 # php configs
-COPY etc/php5/php.ini /etc/php5/cli/php.ini
-COPY etc/php5/php.ini /etc/php5/apache2/php.ini
+# Edit 2016-09-06: This was for php5 ... now we're at php5, so commenting this out
+# COPY etc/php5/php.ini /etc/php5/cli/php.ini
+# COPY etc/php5/php.ini /etc/php5/apache2/php.ini
 
 # Continue
 COPY . /var/lib/IDES/
