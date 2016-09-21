@@ -1,21 +1,5 @@
-FROM php:7-apache
+FROM shadiakiki1986/php7-apache-odbc-and-other
 MAINTAINER Shadi Akiki
-
-# use apt-cacher
-# RUN echo "Acquire::http::Proxy \"http://172.17.0.2:3142\";" | tee /etc/apt/apt.conf.d/01proxy
-
-# set up
-RUN apt-get -qq update > /dev/null
-RUN apt-get -qq -y install curl git libmcrypt-dev libyaml-dev > /dev/null
-RUN docker-php-ext-install mcrypt
-RUN apt-get -qq -y install zlib1g-dev > /dev/null
-RUN pecl channel-update pecl.php.net && \
-    pecl install zip yaml-beta < /dev/null
-RUN docker-php-ext-enable yaml zip mcrypt
-
-RUN curl -sS https://getcomposer.org/installer | php && \
-    chmod +x composer.phar && \
-    mv composer.phar /usr/local/bin/composer
 
 # apache configs
 WORKDIR /etc/apache2/sites-enabled
