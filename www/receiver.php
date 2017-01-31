@@ -6,8 +6,10 @@ header( "Pragma: no-cache" );
 header('Content-type: text/xml');
 
 require_once __DIR__.'/../bootstrap.php';
+require_once __DIR__.'/../src/getConfigFn.php';
 
-$config=yaml_parse_file(__DIR__.'/../etc/config.yml');
+$configFn = getConfigFn();
+$config=yaml_parse_file($configFn);
 $cm = new \FatcaIdesPhp\ConfigManager($config);
 $cm->prefixIfNeeded(__DIR__."/..");
 $cm->checkExist();

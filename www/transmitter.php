@@ -39,6 +39,7 @@ if(!isset($argc)) {
 if(!defined("ROOT_IDES_DATA")) define("ROOT_IDES_DATA",__DIR__."/..");
 require_once ROOT_IDES_DATA.'/bootstrap.php';
 require_once ROOT_IDES_DATA.'/src/getFatcaData.php';
+require_once ROOT_IDES_DATA.'/src/getConfigFn.php';
 use FatcaIdesPhp\Transmitter;
 use Monolog\Logger;
 $LOG_LEVEL=Logger::WARNING;
@@ -53,7 +54,7 @@ if(isset($argc)) {
       case "help":
         echo "Usage: \n";
         echo "       php ".basename(__FILE__)." --help\n";
-        echo "       php ".basename(__FILE__)." --taxYear=2014 [--shuffleSkip] [--debug] [--format=html*|xml|zip]\n";
+        echo "       php ".basename(__FILE__)." --taxYear=2014 [--shuffleSkip] [--debug] [--format=html*|xml|zip|metadata|email|upload|emailAndUpload]\n";
         echo "       php ".basename(__FILE__)." --taxYear=2014 [--shuffleSkip] [--debug] [--emailTo=s.akiki@ffaprivatebank.com --idesUsername=username --idesPassword=password]\n";
         exit;
         break;
@@ -91,7 +92,8 @@ if(isset($argc)) {
 }
 
 // config preprocess
-$config=yaml_parse_file(ROOT_IDES_DATA.'/etc/config.yml');
+$configFn = getConfigFn();
+$config=yaml_parse_file($configFn);
 $cm = new \FatcaIdesPhp\ConfigManager($config);
 $cm->prefixIfNeeded(ROOT_IDES_DATA);
 $cm->checkExist();

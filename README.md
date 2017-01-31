@@ -31,7 +31,7 @@ To set your own institution GIIN, receiver GIIN, SSL certificate, private/public
 1. Create an empty directory `/home/shadi/ides_etc`
 2. Run image with `docker run -p 8123:80 -d -v /home/shadi/ides_etc:/var/lib/IDES/etc -t shadiakiki1986/ides-data-preparation-php`
 3. Run `docker stop -t shadiakiki1986/ides-data-preparation-php`
-4. Edit the file `/home/shadi/ides_etc/config.yml` to set the GIINs
+4. Edit the file `/home/shadi/ides_etc/config.yml` to set the GIINs (or copy to a `config.override.yml` file)
 5. Copy your certificate, private/pubic keys to `/home/shadi/ides_etc/ssl`, using the same filenames (otherwise change the desired names in the config.yml file)
 6. Re-run the image with the run step above
 
