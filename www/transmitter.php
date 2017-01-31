@@ -92,8 +92,7 @@ if(isset($argc)) {
 
 // config preprocess
 $config=yaml_parse_file(ROOT_IDES_DATA.'/etc/config.yml');
-$dm = new \FatcaIdesPhp\Downloader();
-$cm = new \FatcaIdesPhp\ConfigManager($config,$dm);
+$cm = new \FatcaIdesPhp\ConfigManager($config);
 $cm->prefixIfNeeded(ROOT_IDES_DATA);
 $cm->checkExist();
 if(count($cm->msgs)>0) throw new \Exception(implode("\n",$cm->msgs));

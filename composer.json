@@ -6,9 +6,9 @@
     }
   ],
   "require": {
-    "shadiakiki1986/fatca-ides-php": "dev-master",
+    "shadiakiki1986/fatca-ides-php": "dev-drop_downloader_in_favor_of_assets",
     "monolog/monolog": "^1.21",
     "shadiakiki1986/XSD-to-PHP": "dev-master",
-    "shadiakiki1986/swiftmailer-wrapper": "dev-master"
+    "shadiakiki1986/swiftmailer-wrapper": "^0.2"
   }
 }

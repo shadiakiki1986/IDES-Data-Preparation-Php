@@ -13,8 +13,7 @@ function getFatcaData($shuffle,$corrDocRefId,$taxYear,$config) {
     $di=\FatcaIdesPhp\Utils::array2shuffledLetters($di,$fieldsNotShuffle); 
   }
 
-  $dm = new \FatcaIdesPhp\Downloader(null); //,$LOG_LEVEL);
-  $conMan = new \FatcaIdesPhp\ConfigManager($config,$dm); //,$LOG_LEVEL);
+  $conMan = new \FatcaIdesPhp\ConfigManager($config); //,$LOG_LEVEL);
   $fda = new \FatcaIdesPhp\FatcaDataArray($di,$shuffle,$corrDocRefId,$taxYear,$conMan);
   return $fda;
 };

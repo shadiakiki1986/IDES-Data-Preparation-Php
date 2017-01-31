@@ -5,9 +5,6 @@ FatcaKeyPrivate: "etc/ssl/privkey.pem"
 # public key extracted out of private key above
 FatcaKeyPublic: "etc/ssl/pubkey.pem"
 
-# download folder for IRS public key and schema files
-downloadFolder: 'cache/downloads'
-
 # Fatca Sender GIIN
 ffaid: 'A1BBCD.00000.XY.123'
 # Fatca Receiver GIIN, e.g. IRS

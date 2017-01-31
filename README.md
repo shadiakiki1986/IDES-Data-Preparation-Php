@@ -20,7 +20,7 @@ To use it as a web app:
 2. Navigate in your browser to `http://localhost:8123`
 
 To use it as a CLI
-1. Run the dockerfile with `docker run -p 8123:80 -i --entrypoint bash -t shadiakiki1986/ides-data-preparation-php`
+1. Run the dockerfile with `docker run -it --entrypoint bash shadiakiki1986/ides-data-preparation-php`
 2. At the terminal inside the image run `php www/transmitter.php --help`
 
 To load the workspace folders to the host, e.g. to see the downloaded files, or the backed up generated files:

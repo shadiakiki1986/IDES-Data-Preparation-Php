@@ -8,8 +8,7 @@ header('Content-type: text/xml');
 require_once __DIR__.'/../bootstrap.php';
 
 $config=yaml_parse_file(__DIR__.'/../etc/config.yml');
-$dm = new \FatcaIdesPhp\Downloader();
-$cm = new \FatcaIdesPhp\ConfigManager($config,$dm);
+$cm = new \FatcaIdesPhp\ConfigManager($config);
 $cm->prefixIfNeeded(__DIR__."/..");
 $cm->checkExist();
 if(count($cm->msgs)>0) throw new \Exception(implode("\n",$cm->msgs));
