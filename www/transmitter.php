@@ -40,7 +40,7 @@ if(!defined("ROOT_IDES_DATA")) define("ROOT_IDES_DATA",__DIR__."/..");
 require_once ROOT_IDES_DATA.'/bootstrap.php';
 require_once ROOT_IDES_DATA.'/src/getFatcaData.php';
 require_once ROOT_IDES_DATA.'/src/getConfigFn.php';
-use FatcaIdesPhp\Transmitter;
+use FatcaIdesPhp\Factory;
 use Monolog\Logger;
 $LOG_LEVEL=Logger::WARNING;
 
@@ -131,7 +131,8 @@ if($_GET["format"]=="upload" && !$_GET["shuffle"]) throw new Exception("Not allo
 
 // retrieval from mf db table
 $fdi=getFatcaData($_GET['shuffle'],$_GET['CorrDocRefId'],$_GET['taxYear'],$config);
-$tmtr=Transmitter::shortcut(
+$factory = new Factory();
+$tmtr=$factory->transmitter(
   $fdi,$_GET['format'],
   !array_key_exists("emailTo",$_GET)?null:$_GET['emailTo'],
   $config,$LOG_LEVEL);

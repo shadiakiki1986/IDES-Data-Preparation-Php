@@ -8,6 +8,8 @@ header('Content-type: text/xml');
 require_once __DIR__.'/../bootstrap.php';
 require_once __DIR__.'/../src/getConfigFn.php';
 
+use FatcaIdesPhp\Factory;
+
 $configFn = getConfigFn();
 $config=yaml_parse_file($configFn);
 $cm = new \FatcaIdesPhp\ConfigManager($config);
@@ -17,10 +19,11 @@ if(count($cm->msgs)>0) throw new \Exception(implode("\n",$cm->msgs));
 $config = $cm->config;
 
 $zipfile = null;
+$factory = new Factory();
 //-----------------------------------
 if (isset($_FILES['myFile'])) {
   $zipfile = $_FILES['myFile']['tmp_name'];
-  $rx=FatcaIdesPhp\Receiver::shortcut($config,$zipfile);
+  $rx=$factory->receiver($config,$zipfile);
 
   //	echo "<ol> Received zip:\n";
   //	echo "<li>Name: ".$_FILES['myFile']['name']."</li>\n";
@@ -74,7 +77,7 @@ if(!array_key_exists("shuffle",$_GET)) $_GET['shuffle']="true"; # default
 if(!in_array($_GET['shuffle'],array("true","false"))) throw new Exception("Unsupported shuffle. Please use true or false");
 $_GET['shuffle']=($_GET['shuffle']=="true");
 
-$rx=FatcaIdesPhp\Receiver::shortcut(
+$rx=$factory->receiver(
   $config,
   null,
   array("username"=>$_GET["idesUsername"],"password"=>$_GET["idesPassword"]),
