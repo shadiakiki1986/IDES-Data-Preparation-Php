@@ -105,7 +105,7 @@ if(!array_key_exists("format",$_GET)) throw new Exception("Missing format");
 if(in_array($_GET["format"],array("email","emailAndUpload")) && !array_key_exists("swiftmailer",$config)) {
   throw new Exception("Emailing requested but not configured on server in etc/config.yml. Aborting");
 }
-if(in_array($_GET["format"],array("email","emailAndUpload"))) Transmitter::verifySwiftmailerConfig($config["swiftmailer"]);
+if(in_array($_GET["format"],array("email","emailAndUpload"))) \FatcaIdesPhp\Transmitter::verifySwiftmailerConfig($config["swiftmailer"]);
 
 // argument checking
 if(!array_key_exists("format",$_GET)) $_GET['format']="html"; # default
