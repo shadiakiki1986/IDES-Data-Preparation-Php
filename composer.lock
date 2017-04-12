@@ -347,16 +347,16 @@
         },
         {
             "name": "shadiakiki1986/fatca-ides-php",
-            "version": "0.2.6",
+            "version": "0.2.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shadiakiki1986/fatca-ides-php.git",
-                "reference": "f45fccc1d24abf7d8bc902fe47e4228ca01ec214"
+                "reference": "cef050c3d647ea97d6ea88f24fd5bf999e06c95d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shadiakiki1986/fatca-ides-php/zipball/f45fccc1d24abf7d8bc902fe47e4228ca01ec214",
-                "reference": "f45fccc1d24abf7d8bc902fe47e4228ca01ec214",
+                "url": "https://api.github.com/repos/shadiakiki1986/fatca-ides-php/zipball/cef050c3d647ea97d6ea88f24fd5bf999e06c95d",
+                "reference": "cef050c3d647ea97d6ea88f24fd5bf999e06c95d",
                 "shasum": ""
             },
             "require": {
@@ -405,7 +405,7 @@
                 "decryption",
                 "encryption"
             ],
-            "time": "2017-04-11 13:14:46"
+            "time": "2017-04-12 15:41:15"
         },
         {
             "name": "shadiakiki1986/swiftmailer-wrapper",
